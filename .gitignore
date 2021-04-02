@@ -114,3 +114,10 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+# images
+*.jpeg
+*.png
+
+# macos cache
+*.DS_STORE
