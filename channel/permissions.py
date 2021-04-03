@@ -42,7 +42,7 @@ class VideoPermission(BasePermission):
         elif (type(request.user) == AnonymousUser):
             return False
         else :
-            return obj.user == request.user
+            return obj.channel.user == request.user
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:

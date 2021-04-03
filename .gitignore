@@ -121,3 +121,6 @@ GitHub.sublime-settings
 
 # macos cache
 *.DS_STORE
+
+# Misc
+.media
