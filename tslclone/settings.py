@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # local
-    "channel",
+    "users",
+    "channels",
+    "products",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -105,6 +107,18 @@ REST_FRAMEWORK = {
     ]
 }
 
+# Djoser Framework
+DJOSER = {
+    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    # 'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    # 'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {
+        'user': 'users.serializers.UserSerializer',
+        'current_user': 'users.serializers.UserSerializer',
+    },
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -145,24 +159,26 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-# Logging
-LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-    }
-}
+# # Logging
+# LOGGING = {
+#     'version': 1,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#     }
+# }
 
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = ".media/"
+
+AUTH_USER_MODEL = 'users.User'

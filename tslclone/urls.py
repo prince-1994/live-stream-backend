@@ -17,15 +17,16 @@ from django.contrib import admin
 from django.db import router
 from django.urls import path
 from django.urls.conf import include
-from channel.views import ChannelViewSet, UserProfileViewSet, VideoViewSet
+from channels.views import ChannelViewSet, VideoViewSet
+from products.views import ProductViewSet
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
 
 router = DefaultRouter()
-router.register(r'userprofiles', UserProfileViewSet, basename="userprofile")
 router.register(r'channels', ChannelViewSet, basename='channel')
 router.register(r'videos', VideoViewSet, basename="video")
+router.register(r'products', ProductViewSet, basename="product")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
