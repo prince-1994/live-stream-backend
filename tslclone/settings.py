@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -102,23 +103,31 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES' : [
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
 # Djoser Framework
 DJOSER = {
-    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    # 'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    # 'SEND_ACTIVATION_EMAIL': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'email/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    "SEND_CONFIRMATION_EMAIL": True,
     'SERIALIZERS': {
         'user': 'users.serializers.UserSerializer',
         'current_user': 'users.serializers.UserSerializer',
     },
+
+    # 'EMAIL': {
+    #     'activation': 'users.email.ActivationEmail',
+    #     'confirmation': 'users.email.ConfirmationEmail',
+    #     'password_reset': 'users.email.PasswordResetEmail',
+    #     'password_changed_confirmation': 'users.email.PasswordChangedConfirmationEmail',
+    # }
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -182,3 +191,19 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = ".media/"
 
 AUTH_USER_MODEL = 'users.User'
+
+
+# EMAIL_BACKEND = 'django_ses.SESBackend'
+
+# AWS_SES_ACCESS_KEY_ID = os.environ['SES_ACCESS_KEY_ID']
+# AWS_SES_SECRET_ACCESS_KEY = os.environ['SES_SECRET_ACCESS_KEY']
+# AWS_SES_REGION_NAME = 'us-east-2'
+# AWS_SES_REGION_ENDPOINT = 'email-smtp.us-east-2.amazonaws.com'
+
+EMAIL_PORT = 587
+EMAIL_HOST = 'email-smtp.us-east-2.amazonaws.com'
+EMAIL_HOST_USER = os.environ['SES_ACCESS_KEY_ID']
+EMAIL_HOST_PASSWORD = os.environ['SES_SECRET_ACCESS_KEY']
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'yuvrajsahu9868@gmail.com'
