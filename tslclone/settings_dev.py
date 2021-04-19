@@ -158,7 +158,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT')
 
 # # Logging
 # LOGGING = {
@@ -190,7 +190,7 @@ AUTH_USER_MODEL = 'users.User'
 # AWS_SES_ACCESS_KEY_ID = os.environ['SES_ACCESS_KEY_ID']
 # AWS_SES_SECRET_ACCESS_KEY = os.environ['SES_SECRET_ACCESS_KEY']
 # AWS_SES_REGION_NAME = 'us-east-2'
-# AWS_SES_REGION_ENDPOINT = 'email-smtp.us-east-2.amazonaws.com'
+# AWS_SES_REGION_ENDPOINT = os.environ.get('AWS_SES_HOST')
 
 EMAIL_PORT = os.environ.get('AWS_SES_PORT')
 EMAIL_HOST = os.environ.get('AWS_SES_HOST')
