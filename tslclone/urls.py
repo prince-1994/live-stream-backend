@@ -28,6 +28,7 @@ router.register(r'channels', ChannelViewSet, basename='channel')
 router.register(r'videos', VideoViewSet, basename="video")
 router.register(r'products', ProductViewSet, basename="product")
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
