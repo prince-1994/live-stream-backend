@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.db import router
 from django.urls import path
 from django.urls.conf import include
-from channels.views import ChannelViewSet, VideoViewSet
+from channels.views import ChannelViewSet, VideoViewSet, get_my_channel
 from products.views import ProductViewSet
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
@@ -33,6 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('channels/mine/', get_my_channel),
 ]
 urlpatterns += router.urls
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

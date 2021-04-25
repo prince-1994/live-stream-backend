@@ -5,10 +5,9 @@ import os
 class Channel(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=100)
-    stream_key = models.URLField()
     owner = models.ForeignKey(User, related_name="channels", on_delete=models.CASCADE)
-    display_pic = models.FileField(null = True)
-    background_pic = models.FileField(null=True)
+    display_pic = models.ImageField(null = True)
+    background_pic = models.ImageField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

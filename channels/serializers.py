@@ -14,8 +14,8 @@ new_asset_settings = mux_python.CreateAssetRequest(playback_policy=[mux_python.P
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
-        fields = ('id', 'name', 'description', 'stream', 'user', 'display_pic', 'background_pic')
-        read_only_fields = ('user', 'stream')
+        fields = ('id', 'name', 'description', 'owner', 'display_pic', 'background_pic')
+        read_only_fields = ('owner',)
 
     # Use this method for the custom field
     def _user(self):
@@ -26,12 +26,10 @@ class ChannelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self._user()
-        create_live_stream_request = mux_python.CreateLiveStreamRequest(playback_policy=[mux_python.PlaybackPolicy.PUBLIC], new_asset_settings=new_asset_settings)
-        create_live_stream_response = live_api.create_live_stream(create_live_stream_request)
-        print(create_live_stream_request)
-        print(create_live_stream_response)
-        stream_key = create_live_stream_response.data.stream_key
-        obj = Channel.objects.create(user=user,stream=stream_key,**validated_data)
+        # create_live_stream_request = mux_python.CreateLiveStreamRequest(playback_policy=[mux_python.PlaybackPolicy.PUBLIC], new_asset_settings=new_asset_settings)
+        # create_live_stream_response = live_api.create_live_stream(create_live_stream_request)
+        # stream_key = create_live_stream_response.data.stream_key
+        obj = Channel.objects.create(owner=user,**validated_data)
         obj.save()
         return obj
 

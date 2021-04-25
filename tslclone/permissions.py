@@ -9,7 +9,7 @@ class IsAuthenticatedAndOwner(BasePermission):
         elif (type(request.user) == AnonymousUser):
             return False
         else :
-            return obj.user == request.user
+            return obj.owner == request.user
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:

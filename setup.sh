@@ -1,5 +1,5 @@
 #!/bin/bash
-file=$([ -z "$1" ] && echo ".env" || echo ".env.$1")
+file=$([ -z "$1" ] && echo ".env" || echo "$1.env")
 
 if [ -f $file ]; then
     echo "$file environment selected"
