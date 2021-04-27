@@ -4,7 +4,7 @@ import os
 
 class Channel(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=100)
+    description = models.TextField()
     owner = models.ForeignKey(User, related_name="channels", on_delete=models.CASCADE)
     display_pic = models.ImageField(null = True)
     background_pic = models.ImageField(null=True)
