@@ -14,26 +14,37 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.db import router
 from django.urls import path
 from django.urls.conf import include
-from channels.views import ChannelViewSet, VideoViewSet, get_my_channel
-from products.views import ProductViewSet
+from rest_framework import viewsets
+from channels.views import ChannelViewSet, EditChannelViewSet
+from products.views import ProductViewSet, EditProductViewSet, ProductImagesList
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_nested import routers
 
 router = DefaultRouter()
 router.register(r'channels', ChannelViewSet, basename='channel')
-router.register(r'videos', VideoViewSet, basename="video")
 router.register(r'products', ProductViewSet, basename="product")
+router.register(r'users', viewsets.ViewSet, basename="user")
 
+channels_edit_router = DefaultRouter()
+channels_edit_router.register(r'channels', EditChannelViewSet, basename='editchannel')
+
+products_edit_router = DefaultRouter()
+products_edit_router.register(r'products', EditProductViewSet, basename="editproduct")
+
+
+# router.register(r'videos', VideoViewSet, basename="video")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('channels/mine/', get_my_channel),
+    path('users/<int:user_id>/', include(channels_edit_router.urls)),
+    path('channels/<int:channel_id>/',include(products_edit_router.urls))
+
 ]
 urlpatterns += router.urls
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
