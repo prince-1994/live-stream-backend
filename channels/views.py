@@ -11,7 +11,7 @@ class EditChannelViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, IsChannelOwner)
 
     def get_queryset(self):
-        owner = self.kwargs['user_id']
+        owner = self.request.user.id
         return Channel.objects.filter(owner__id = owner)
 
 class ChannelViewSet(viewsets.ReadOnlyModelViewSet):

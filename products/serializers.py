@@ -12,7 +12,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'price', 'primaryImage', 'sku_id', 'category')
+        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'sku_id', 'category')
         read_only_fields = ('channel',)
 
     def _user(self):

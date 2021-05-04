@@ -15,7 +15,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     channel = models.ForeignKey(Channel,related_name='products', on_delete=models.CASCADE)
-    primaryImage = models.ImageField(default=None)
+    primary_image = models.ImageField(default=None)
     sku_id = models.CharField(max_length=100)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT) 
 

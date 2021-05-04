@@ -35,14 +35,13 @@ channels_edit_router.register(r'channels', EditChannelViewSet, basename='editcha
 products_edit_router = DefaultRouter()
 products_edit_router.register(r'products', EditProductViewSet, basename="editproduct")
 
-
 # router.register(r'videos', VideoViewSet, basename="video")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('users/<int:user_id>/', include(channels_edit_router.urls)),
+    path('users/', include(channels_edit_router.urls)),
     path('channels/<int:channel_id>/',include(products_edit_router.urls))
 
 ]
