@@ -18,7 +18,7 @@ from django.urls import path
 from django.urls.conf import include
 from rest_framework import viewsets
 from channels.views import ChannelViewSet, EditChannelViewSet
-from products.views import ProductViewSet, EditProductViewSet, ProductImagesList
+from products.views import CategoryViewSet, ProductViewSet, EditProductViewSet, ProductImagesList
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
@@ -27,7 +27,7 @@ from rest_framework_nested import routers
 router = DefaultRouter()
 router.register(r'channels', ChannelViewSet, basename='channel')
 router.register(r'products', ProductViewSet, basename="product")
-router.register(r'users', viewsets.ViewSet, basename="user")
+router.register(r'categories', CategoryViewSet, basename="category")
 
 channels_edit_router = DefaultRouter()
 channels_edit_router.register(r'channels', EditChannelViewSet, basename='editchannel')

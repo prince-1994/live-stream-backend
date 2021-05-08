@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 class EditProductViewSet(viewsets.ModelViewSet):
-    serializer_class = ProductSerializer
+    serializer_class = EditProductSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsProductOwner)
 
     def get_queryset(self):
@@ -20,6 +20,11 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
     queryset = Product.objects.all()
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = CategorySerializer
+    permission_classes = (AllowAny,)
+    queryset = Category.objects.all()
 
 class ProductImagesList(APIView):
     def get(self, request, product_id):
