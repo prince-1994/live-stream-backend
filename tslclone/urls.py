@@ -16,9 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
-from rest_framework import viewsets
 from channels.views import ChannelViewSet, EditChannelViewSet
-from products.views import CategoryViewSet, ProductViewSet, EditProductViewSet, ProductImagesList
+from products.views import CategoryViewSet, ProductViewSet, EditProductViewSet
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
@@ -36,7 +35,9 @@ products_edit_router.register(r'products', EditProductViewSet, basename="editpro
 
 # router.register(r'videos', VideoViewSet, basename="video")
 
-urlpatterns = [
+urlpatterns = []
+urlpatterns += router.urls
+urlpatterns += [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
@@ -44,5 +45,4 @@ urlpatterns = [
     path('channels/<int:channel_id>/',include(products_edit_router.urls))
 
 ]
-urlpatterns += router.urls
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
