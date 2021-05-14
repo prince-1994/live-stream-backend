@@ -17,7 +17,9 @@ class Product(models.Model):
     channel = models.ForeignKey(Channel,related_name='products', on_delete=models.CASCADE)
     primary_image = models.ImageField(default=None)
     sku_id = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT) 
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
 
     def __str__(self) -> str:
         return self.name

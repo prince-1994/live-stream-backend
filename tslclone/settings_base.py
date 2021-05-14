@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "users",
     "channels",
     "products",
+    "shows",
 ]
 
 CORS_ALLOWED_ORIGINS = [
