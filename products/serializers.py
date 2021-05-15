@@ -25,7 +25,7 @@ class EditProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         channel_id = self.context.get('request').parser_context.get('kwargs').get(
-        'channel_id')
+            'channel_id')
         
         channel = Channel.objects.filter(id=channel_id).first()
         obj = Product.objects.create(channel=channel,**validated_data)

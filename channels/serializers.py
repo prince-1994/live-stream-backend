@@ -1,11 +1,13 @@
+from botocore import model
 from rest_framework import serializers
 from .models import Channel
+import boto3
 
-class ChannelSerializer(serializers.ModelSerializer):
+class EditChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
-        fields = ('id', 'name', 'description', 'owner', 'display_pic', 'background_pic')
-        read_only_fields = ('owner',)
+        fields = ('id', 'name', 'description', 'owner', 'display_pic', 'background_pic', 'arn', 'stream_key_arn')
+        read_only_fields = ('owner', 'arn', 'stream_key_arn')
 
     # Use this method for the custom field
     def _user(self):
@@ -16,6 +18,23 @@ class ChannelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self._user()
-        obj = Channel.objects.create(owner=user,**validated_data)
+        ivs_client = boto3.client('ivs', region_name='us-west-2')
+        response = ivs_client.create_channel(
+            name=validated_data.get('name'), 
+            latencyMode='LOW',
+            type='BASIC',
+        )
+        obj = Channel.objects.create(
+            owner=user,
+            arn=response.get('channel').get('arn'),
+            stream_key_arn=response.get('streamKey').get('arn'),
+            **validated_data)
         obj.save()
         return obj
+
+
+class ChannelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Channel
+        fields = ('id', 'name', 'description', 'owner', 'display_pic', 'background_pic', 'arn',)
+        read_only_fields = ('owner',)

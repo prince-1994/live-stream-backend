@@ -18,7 +18,7 @@ from shows.models import Show
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
-from channels.views import ChannelViewSet, EditChannelViewSet
+from channels.views import ChannelViewSet, EditChannelViewSet, get_AWS_Channel, get_AWS_Stream_Key
 from products.views import CategoryViewSet, ProductViewSet, EditProductViewSet
 from shows.views import ShowViewSet, EditShowViewSet
 from rest_framework.routers import DefaultRouter
@@ -50,5 +50,7 @@ urlpatterns += [
     path('users/', include(channels_edit_router.urls)),
     path('channels/<int:channel_id>/',include(products_edit_router.urls)),
     path('channels/<int:channel_id>/', include(shows_edit_router.urls)),
+    path('channel-details/<int:channel_id>/', get_AWS_Channel),
+    path('channel-details/<int:channel_id>/stream-key/', get_AWS_Stream_Key),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
