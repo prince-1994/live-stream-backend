@@ -21,16 +21,9 @@ class ChannelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Channel.objects.all()
 
 @api_view()
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny,])
 def get_AWS_Channel(request, channel_id):
-    channel = request.user.channels.all()[0]
-    if channel.id != channel_id:
-        return Response({ 
-        "data" : { 
-            "error" : "You do not have permissions"
-            }
-        },
-        status=status.HTTP_401_UNAUTHORIZED)
+    channel = Channel.objects.get(pk=channel_id)
     ivs_client = boto3.client('ivs', region_name='us-west-2')
     response = ivs_client.get_channel(arn=channel.arn)
     return Response(response.get('channel'))
