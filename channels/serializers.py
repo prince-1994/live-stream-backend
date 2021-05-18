@@ -19,8 +19,10 @@ class EditChannelSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self._user()
         ivs_client = boto3.client('ivs', region_name='us-west-2')
+        alphanumeric = [character for character in validated_data.get('name') if character.isalnum()]
+        alphanumeric = "".join(alphanumeric)
         response = ivs_client.create_channel(
-            name=validated_data.get('name'), 
+            name=alphanumeric, 
             latencyMode='LOW',
             type='BASIC',
         )

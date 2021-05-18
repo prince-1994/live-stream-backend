@@ -22,15 +22,26 @@ class ChannelViewSet(viewsets.ReadOnlyModelViewSet):
 
 @api_view()
 @permission_classes([AllowAny,])
-def get_AWS_Channel(request, channel_id):
+def get_aws_channel(request, channel_id):
     channel = Channel.objects.get(pk=channel_id)
     ivs_client = boto3.client('ivs', region_name='us-west-2')
     response = ivs_client.get_channel(arn=channel.arn)
     return Response(response.get('channel'))
 
 @api_view()
+@permission_classes([AllowAny,])
+def get_aws_stream(request, channel_id):
+    channel = Channel.objects.get(pk=channel_id)
+    ivs_client = boto3.client('ivs', region_name='us-west-2')
+    try:
+        response = ivs_client.get_stream(channelArn=channel.arn)
+        return Response(response.get('stream'))
+    except:
+        return Response({'stream' : 'No live stream is present'}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view()
 @permission_classes([IsAuthenticated])
-def get_AWS_Stream_Key(request, channel_id):
+def get_aws_stream_key(request, channel_id):
     channel = request.user.channels.all()[0]
     if channel.id != channel_id:
         return Response({ 
@@ -42,3 +53,4 @@ def get_AWS_Stream_Key(request, channel_id):
     ivs_client = boto3.client('ivs', region_name='us-west-2')
     response = ivs_client.get_stream_key(arn=channel.stream_key_arn)
     return Response(response.get('streamKey'))
+    
