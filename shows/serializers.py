@@ -1,3 +1,4 @@
+from channels.serializers import ChannelSerializer
 from django.http.response import Http404
 from products.models import Product
 from rest_framework import serializers
@@ -26,7 +27,10 @@ class EditShowSerializer(serializers.ModelSerializer):
         return obj
 
 class ShowSerializer(serializers.ModelSerializer):
+    channel = ChannelSerializer(read_only=True)
+
     class Meta:
         model = Show
         fields = ('id', 'name', 'description', 'channel', 'display_pic', 'products', 'time')
-        read_only_fields = ('name', 'description', 'channel', 'display_pic', 'products',)
+        read_only_fields = ('name', 'description', 'channel', 'display_pic', 'products', 'time')
+        depth = 1

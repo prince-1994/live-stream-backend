@@ -3,6 +3,12 @@ from rest_framework import serializers
 from .models import Channel
 import boto3
 
+class ChannelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Channel
+        fields = ('id', 'name', 'description', 'owner', 'display_pic', 'background_pic', 'arn',)
+        read_only_fields = ('owner',)
+
 class EditChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
@@ -35,8 +41,3 @@ class EditChannelSerializer(serializers.ModelSerializer):
         return obj
 
 
-class ChannelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Channel
-        fields = ('id', 'name', 'description', 'owner', 'display_pic', 'background_pic', 'arn',)
-        read_only_fields = ('owner',)
