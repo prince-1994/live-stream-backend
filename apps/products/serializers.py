@@ -1,6 +1,6 @@
 from django.db.models import fields
 from rest_framework.utils import model_meta
-from channels.models import Channel
+from apps.channels.models import Channel
 from rest_framework import serializers
 from .models import Category, Product, ProductImage
 

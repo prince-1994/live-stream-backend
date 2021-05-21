@@ -14,13 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.views.generic import base
-from shows.models import Show
+from apps.shows.models import Show
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
-from channels.views import ChannelViewSet, EditChannelViewSet, get_aws_channel, get_aws_stream_key, get_aws_stream
-from products.views import CategoryViewSet, ProductViewSet, EditProductViewSet
-from shows.views import ShowViewSet, EditShowViewSet
+from apps.channels.views import ChannelViewSet, EditChannelViewSet, get_aws_channel, get_aws_stream_key, get_aws_stream
+from apps.products.views import CategoryViewSet, ProductViewSet, EditProductViewSet
+from apps.shows.views import ShowViewSet, EditShowViewSet
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static

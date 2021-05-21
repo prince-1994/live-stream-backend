@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from channels.apps import ChannelsConfig
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,12 +32,13 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'corsheaders',
+    'channels',
 
     # local
-    "users",
-    "channels",
-    "products",
-    "shows",
+    "apps.users.apps.UsersConfig",
+    "apps.channels.apps.ChannelsConfig",
+    "apps.products.apps.ProductsConfig",
+    "apps.shows.apps.ShowsConfig",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -92,8 +94,8 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     "SEND_CONFIRMATION_EMAIL": True,
     'SERIALIZERS': {
-        'user': 'users.serializers.UserSerializer',
-        'current_user': 'users.serializers.UserSerializer',
+        'user': 'apps.users.serializers.UserSerializer',
+        'current_user': 'apps.users.serializers.UserSerializer',
     },
 
     # 'EMAIL': {
@@ -166,7 +168,7 @@ MEDIA_URL = "/media/"
 
 MEDIA_ROOT = ".media/"
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'TslCloneUsers.User'
 
 DOMAIN = os.environ.get('VUE_FRONTEND_HOST')
 SITE_NAME = os.environ.get('DJANGO_SITE_NAME')
@@ -184,3 +186,5 @@ EMAIL_HOST_PASSWORD = os.environ.get('AWS_SES_SECRET_ACCESS_KEY')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL')
+
+ASGI_APPLICATION = 'tslclone.asgi.application'

@@ -1,6 +1,6 @@
 from django.db import models
-from channels.models import Channel
-from products.models import Product
+from apps.channels.models import Channel
+from apps.products.models import Product
 
 class Show(models.Model):
     name = models.CharField(max_length=100)

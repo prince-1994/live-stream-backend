@@ -1,5 +1,5 @@
 from django.db import models
-from channels.models import Channel
+from apps.channels.models import Channel
 
 class  Category(models.Model):
     name = models.CharField(unique=True, max_length=150)

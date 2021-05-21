@@ -2,7 +2,7 @@ from django.http.response import Http404
 from rest_framework import viewsets, status
 from .models import Product
 from .serializers import *
-from products.permisssions import IsProductOwner
+from .permisssions import IsProductOwner
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response

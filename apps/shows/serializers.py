@@ -1,9 +1,9 @@
-from channels.serializers import ChannelSerializer
+from apps.channels.serializers import ChannelSerializer
 from django.http.response import Http404
-from products.models import Product
+from apps.products.models import Product
 from rest_framework import serializers
 from .models import Show
-from channels.models import Channel
+from apps.channels.models import Channel
 
 class EditShowSerializer(serializers.ModelSerializer):
     class Meta:
