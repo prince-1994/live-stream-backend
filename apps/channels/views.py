@@ -12,6 +12,7 @@ class EditChannelViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, IsChannelOwner)
 
     def get_queryset(self):
+        print(self.request.user)
         owner = self.request.user.id
         return Channel.objects.filter(owner__id = owner)
 
@@ -42,7 +43,7 @@ def get_aws_stream(request, channel_id):
 @api_view()
 @permission_classes([IsAuthenticated])
 def get_aws_stream_key(request, channel_id):
-    channel = request.user.channels.all()[0]
+    channel = Channel.objects.get(pk=channel_id)
     if channel.id != channel_id:
         return Response({ 
             "data" : { 
