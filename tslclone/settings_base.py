@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "apps.channels.apps.ChannelsConfig",
     "apps.products.apps.ProductsConfig",
     "apps.shows.apps.ShowsConfig",
+    "apps.chats.apps.ChatsConfig",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -188,3 +189,12 @@ EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL')
 
 ASGI_APPLICATION = 'tslclone.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts' : [('127.0.0.1', 6379)],
+        }
+    }
+}

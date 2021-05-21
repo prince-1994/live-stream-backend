@@ -44,6 +44,7 @@ shows_edit_router.register(r'shows', EditShowViewSet, basename="editshow")
 urlpatterns = []
 urlpatterns += router.urls
 urlpatterns += [
+    path('chat/', include('apps.chats.urls')),
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
