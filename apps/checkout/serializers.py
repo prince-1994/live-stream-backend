@@ -1,4 +1,3 @@
-from django.db.models import fields
 from apps.products.serializers import CategorySerializer
 from apps.channels.models import Channel
 from apps.products.models import Product
@@ -29,6 +28,3 @@ class EditCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ('id', 'product', 'quantity')
-
-
-        

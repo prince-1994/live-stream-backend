@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "apps.products.apps.ProductsConfig",
     "apps.shows.apps.ShowsConfig",
     "apps.chats.apps.ChatsConfig",
-    "apps.checkout.apps.CheckoutConfig"
+    "apps.checkout.apps.CheckoutConfig",
+    "apps.profiles.apps.ProfilesConfig",
 ]
 
 CORS_ALLOWED_ORIGINS = [

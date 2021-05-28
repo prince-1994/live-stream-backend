@@ -22,6 +22,7 @@ from django.urls.conf import include
 from apps.channels.views import ChannelViewSet, EditChannelViewSet, get_aws_channel, get_aws_stream_key, get_aws_stream
 from apps.products.views import CategoryViewSet, ProductViewSet, EditProductViewSet
 from apps.shows.views import ShowViewSet, EditShowViewSet
+from apps.profiles.views import EditAddressViewset
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
@@ -32,6 +33,7 @@ router.register(r'products', ProductViewSet, basename="product")
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'shows', ShowViewSet, basename='show')
 router.register(r'cart', EditCartViewSet, basename='cart')
+router.register(r'profile/addresses', EditAddressViewset, basename='address')
 
 channels_edit_router = DefaultRouter()
 channels_edit_router.register(r'channels', EditChannelViewSet, basename='editchannel')

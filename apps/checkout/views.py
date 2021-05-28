@@ -1,8 +1,4 @@
-from os import write
-
-from django.http import request
 from apps.checkout.models import CartItem
-from django.shortcuts import render
 from apps.checkout.serializers import CartSerializer, EditCartSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
