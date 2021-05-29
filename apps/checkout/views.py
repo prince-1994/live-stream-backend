@@ -3,6 +3,7 @@ from apps.checkout.serializers import CartSerializer, EditCartSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action, permission_classes
 
 class EditCartViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -23,3 +24,9 @@ class EditCartViewSet(viewsets.ModelViewSet):
         cart_item = CartItem.objects.create(user=user,**serializer.validated_data)
         cart_item.save()
         return Response(CartSerializer(cart_item).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'], permission_classes=(IsAuthenticated,))
+    def clear(self, request):
+        user = request.user
+        CartItem.objects.filter(user=user).delete()
+        return Response('success')
