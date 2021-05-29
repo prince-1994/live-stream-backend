@@ -24,7 +24,9 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(User, related_name="orders", on_delete=models.PROTECT)
-    total_amount = models.DecimalField(max_digits=10,decimal_places=2)
+    total_amount_collected = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateTimeField(null=True)
+    stripe_payment_intent = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # can implement coupons for order
@@ -50,7 +52,7 @@ class OrderItem(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"{self.product}({self.quantity}) - {self.created_at}"
+        return f"{self.product} ({self.quantity}) - {self.created_at}"
 
 class OrderItemStatus(models.Model):
     STATUS_CHOICES = [

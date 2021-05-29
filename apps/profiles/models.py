@@ -18,3 +18,7 @@ class Address(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+class CustomerProfile(models.Model):
+    user = models.OneToOneField(User, related_name="customer_profile", on_delete=models.PROTECT)
+    stripe_profile = models.CharField(max_length=100)
