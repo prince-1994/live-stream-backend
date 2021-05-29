@@ -1,7 +1,6 @@
+from apps.payout.models import Commission
 from apps.profiles.models import Address
 from django.db import models
-from django.db.models.aggregates import Max
-from django.db.models.fields import related
 from apps.users.models import User
 from apps.products.models import Product
 
@@ -29,16 +28,19 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # can implement coupons for order
+
+    def __str__(self) -> str:
+        return f"#{self.id}"
     
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, related_name="order_items", on_delete=models.PROTECT)
-    order = models.ForeignKey(Order, related_name="order_items", on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name="order_items", on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
+    commission = models.ForeignKey(Commission, related_name='order_items', on_delete=models.PROTECT)
     quantity = models.IntegerField()
     address = models.ForeignKey(Address, related_name="orders", on_delete=models.PROTECT)
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -46,6 +48,9 @@ class OrderItem(models.Model):
         constraints = [
             models.CheckConstraint(check=models.Q(quantity__gte=1), name="order_item_quantity_gte_1")
         ]
+
+    def __str__(self) -> str:
+        return f"{self.product}({self.quantity}) - {self.created_at}"
 
 class OrderItemStatus(models.Model):
     STATUS_CHOICES = [
@@ -57,3 +62,8 @@ class OrderItemStatus(models.Model):
     order_item = models.ForeignKey(OrderItem, related_name="statuses", on_delete=models.CASCADE)
     date = models.DateTimeField()
     value = models.CharField(max_length=1,choices=STATUS_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.value} - {self.date}"
