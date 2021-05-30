@@ -51,3 +51,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ('id', 'total_amount_collected', 'payment_date')
         read_only_fields = ('total_amount_collected', 'payment_date')
 
+class CreateOrderSerializer(serializers.Serializer):
+    product = serializers.IntegerField()
+    quantity = serializers.IntegerField()
+    address = serializers.IntegerField()
