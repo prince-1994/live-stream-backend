@@ -1,9 +1,15 @@
+from django.db import models
+from django.db.models import fields
+from rest_framework.decorators import action
+from rest_framework.fields import ReadOnlyField
 from apps.products.serializers import CategorySerializer
 from apps.channels.models import Channel
 from apps.products.models import Product
 from rest_framework import serializers
-from apps.checkout.models import CartItem
+from apps.checkout.models import CartItem, Order
 
+
+# cart related serializers
 class CartProductChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
@@ -28,3 +34,20 @@ class EditCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ('id', 'product', 'quantity')
+
+
+# order related serializer
+class OrderItemSerializer(serializers.ModelField):
+    product=CartProductSerializer(read_only=True)
+    class Meta:
+        model = Order
+        fields = ('id', 'product', 'price', 'selling_price', 'quantity', 'address')
+        read_only_fields = ('product', 'price', 'selling_price', 'quantity', 'address')
+        depth = 1
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('id', 'total_amount_collected', 'payment_date')
+        read_only_fields = ('total_amount_collected', 'payment_date')
+

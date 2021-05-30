@@ -11,7 +11,7 @@ class OrderItemStatusAdminInline(admin.StackedInline):
     extra = 0
 
 class OrderItemAdmin(admin.ModelAdmin):
-    inlines = [OrderItemStatusAdminInline]
+    inlines = [OrderItemStatusAdminInline,]
 
 admin.site.register(Order)
-admin.site.register(OrderItemAdmin)
+admin.site.register(OrderItem, OrderItemAdmin)
