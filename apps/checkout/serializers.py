@@ -6,7 +6,7 @@ from apps.products.serializers import CategorySerializer
 from apps.channels.models import Channel
 from apps.products.models import Product
 from rest_framework import serializers
-from apps.checkout.models import CartItem, Order
+from apps.checkout.models import CartItem, Order, OrderItem
 
 
 # cart related serializers
@@ -37,12 +37,12 @@ class EditCartSerializer(serializers.ModelSerializer):
 
 
 # order related serializer
-class OrderItemSerializer(serializers.ModelField):
+class OrderItemSerializer(serializers.ModelSerializer):
     product=CartProductSerializer(read_only=True)
     class Meta:
-        model = Order
-        fields = ('id', 'product', 'price', 'selling_price', 'quantity', 'address')
-        read_only_fields = ('product', 'price', 'selling_price', 'quantity', 'address')
+        model = OrderItem
+        fields = ('id', 'product', 'order', 'price', 'selling_price', 'quantity', 'address')
+        read_only_fields = ('product', 'price', 'order', 'selling_price', 'quantity', 'address')
         depth = 1
 
 class OrderSerializer(serializers.ModelSerializer):

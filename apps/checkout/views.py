@@ -49,5 +49,5 @@ class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return OrderItem.objects.filter(user=user)
+        return OrderItem.objects.filter(order__user=user)
 

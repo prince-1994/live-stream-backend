@@ -10,3 +10,6 @@ class Commission(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.channel.name} - {self.category.name} : {self.percent_per_item}% + {self.fixed_per_item}" 

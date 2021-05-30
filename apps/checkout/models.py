@@ -27,12 +27,13 @@ class Order(models.Model):
     total_amount_collected = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(null=True)
     stripe_payment_intent = models.CharField(max_length=100)
+    is_cancelled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # can implement coupons for order
 
     def __str__(self) -> str:
-        return f"#{self.id}"
+        return f"Order #{self.id}"
     
 
 class OrderItem(models.Model):
@@ -40,6 +41,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="order_items", on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
+    collected_amount = models.DecimalField(max_digits=10, decimal_places=2)
     commission = models.ForeignKey(Commission, related_name='order_items', on_delete=models.PROTECT)
     quantity = models.IntegerField()
     address = models.ForeignKey(Address, related_name="orders", on_delete=models.PROTECT)
