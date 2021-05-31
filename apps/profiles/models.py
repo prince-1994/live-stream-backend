@@ -5,8 +5,12 @@ class Address(models.Model):
     COUNTRY_CHOICES = [
         ('IN', 'India')
     ]
+    TYPE_CHOICES = [
+        ('H', 'Home'),
+        ('W', 'Work')
+    ]
     user = models.ForeignKey(User, related_name="addresses", on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, default="home")
+    type = models.CharField(max_length=100, choices=TYPE_CHOICES, default='H')
     name = models.CharField(max_length=100)
     line1 = models.CharField(max_length=200)
     line2 = models.CharField(max_length=200, null=True)
@@ -20,5 +24,5 @@ class Address(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return self.title
+        return f"{self.name} - {self.type}"
     

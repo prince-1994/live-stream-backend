@@ -4,7 +4,7 @@ from rest_framework import serializers
 class EditAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ('id', 'title', 'name', 'first_line', 'second_line', 'landmark', 'city', 'state', 'country', 'postal_code', 'phone_no')
+        fields = ('id', 'type', 'name', 'line1', 'line2', 'landmark', 'city', 'state', 'country', 'postal_code', 'phone_no')
 
     # Use this method for the custom field
     def _user(self):
