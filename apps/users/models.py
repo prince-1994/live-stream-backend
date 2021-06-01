@@ -12,6 +12,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, null=True)
     stripe_customer = models.CharField(max_length=100, null = True)
     stripe_connected_account = models.CharField(max_length=100, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
