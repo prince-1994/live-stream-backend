@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from apps.checkout.views import EditCartViewSet
+from apps.checkout.views import EditCartViewSet, OrderItemViewSet, OrderViewSet
 from django.views.generic import base
 from apps.shows.models import Show
 from django.contrib import admin
@@ -34,6 +34,9 @@ router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'shows', ShowViewSet, basename='show')
 router.register(r'cart', EditCartViewSet, basename='cart')
 router.register(r'profile/addresses', EditAddressViewset, basename='address')
+router.register(r'orders', OrderViewSet, basename='order')
+router.register(r'order-items', OrderItemViewSet, basename='order-item')
+
 
 channels_edit_router = DefaultRouter()
 channels_edit_router.register(r'channels', EditChannelViewSet, basename='editchannel')
