@@ -1,16 +1,16 @@
 from os import stat
-from stripe.api_resources.customer import Customer
 from apps.profiles.models import Address
 from apps.payout.models import Commission
-from apps.products.models import Category, Product
+from apps.products.models import Product
 from apps.checkout.models import CartItem, Order, OrderItem
 from apps.checkout.serializers import CartSerializer, EditCartSerializer, OrderItemSerializer, OrderSerializer, CreateOrderSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
-from tslclone.settings import STRIPE_PUBLISHABLE_KEY, STRIPE_SECRET_KEY
+from tslclone.settings import STRIPE_SECRET_KEY, STRIPE_ORDERS_ENDPOINT_SECRET
 import stripe
+import json
 
 stripe.api_key = STRIPE_SECRET_KEY
 
@@ -169,6 +169,50 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             order_details_dict[channel_id]['total_amount'] += subtotal
         print(total)
         return (order_details_dict, total)
+
+    @action(detail=False, methods=['post'], permission_classes=(), url_path='webhook')
+    def webhook(self, request, *args, **kwargs):
+        payload = request.body
+        event = None
+        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, 
+                sig_header,
+                STRIPE_ORDERS_ENDPOINT_SECRET)
+        except ValueError as e:
+            # Invalid payload
+            return Response({"error" : "stripe event object not found"},status=status.HTTP_400_BAD_REQUEST)
+        print(event)
+        payment_intent = event.data.object # contains a stripe.PaymentIntent
+        orders = Order.objects.filter(stripe_payment_intent=payment_intent.id)
+        event_dict = {
+            'canceled': 'cn',
+            'created' : 'cr',
+            'failed' : 'fa',
+            'processing' : 'pr',
+            'requires_action' : 'ra',
+            'succeeded' : 'sc'
+            }
+        event_str = event.type.replace('payment_intent.', '')
+        event_str_value = event_dict.get(event_str)
+        if not event_str_value:
+            return Response({"error" : "wrong event type sent"}, status=status.HTTP_400_BAD_REQUEST) 
+        # Handle the event
+        event_sorted_order = ['cr', 'ra',  'pr', 'cn', 'fa', 'sc']
+        for order in orders:
+            payment_status = order.payment_status
+            if payment_status:
+                index_1 = event_sorted_order.index(payment_status)
+                index_2 = event_sorted_order.index(event_str_value)
+
+            if (not payment_status) or index_2 > index_1:
+                order.payment_status = event_str_value
+                order.save()    
+
+        return Response({"message" : "payment save successfully"}, status=status.HTTP_202_ACCEPTED)
+
 
 
 class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):

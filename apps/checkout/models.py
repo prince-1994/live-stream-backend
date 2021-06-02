@@ -23,11 +23,19 @@ class CartItem(models.Model):
 
 
 class Order(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('cn', 'canceled'),
+        ('cr', 'created'),
+        ('fa', 'failed'),
+        ('pr', 'processing'),
+        ('ra', 'requires_action'),
+        ('sc', 'succeeded'),
+    ]
+
     user = models.ForeignKey(User, related_name="orders", on_delete=models.PROTECT)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateTimeField(default= None, null=True)
     stripe_payment_intent = models.CharField(max_length=100, default=None, null=True)
-    is_cancelled = models.BooleanField(default=False)
+    payment_status = models.CharField(max_length=2, choices=PAYMENT_STATUS_CHOICES, null=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # can implement coupons for order

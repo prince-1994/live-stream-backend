@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "apps.checkout.apps.CheckoutConfig",
     "apps.profiles.apps.ProfilesConfig",
     "apps.payout.apps.PayoutConfig",
+    "apps.applications.apps.ApplicationsConfig",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -204,3 +205,4 @@ CHANNEL_LAYERS = {
 
 STRIPE_PUBLISHABLE_KEY=os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY=os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_ORDERS_ENDPOINT_SECRET=os.environ.get('STRIPE_ORDERS_ENDPOINT_SECRET')
