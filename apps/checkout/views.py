@@ -1,3 +1,5 @@
+from apps.checkout.permissions import IsOrderItemForChannelOwner
+from apps.channels.models import Channel
 from os import stat
 from apps.profiles.models import Address
 from apps.payout.models import Commission
@@ -10,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
 from tslclone.settings import STRIPE_SECRET_KEY, STRIPE_ORDERS_ENDPOINT_SECRET
 import stripe
-import json
 
 stripe.api_key = STRIPE_SECRET_KEY
 
@@ -55,7 +56,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         items = serializer.validated_data
         user = self.create_stripe_customer_if_not_present(request.user)
         (order_details_dict, total) = self.get_all_order_details(items=items,user=user)
-        result_orders = self.create_all_orders(user, order_details_dict)
+        result_orders = self.create_all_orders(user, order_details_dict, total)
         metadata = {}
         i = 0
         for channel_id, order_dict in result_orders.items():
@@ -88,15 +89,16 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({"client_secret": response.client_secret})
         # return Response({"client_secret" : response.client_secret}, status=status.HTTP_201_CREATED)
 
-    def create_all_orders(self, user, order_details_dict):
+    def create_all_orders(self, user, order_details_dict, total):
         result_orders = {}
-        for channel_id in order_details_dict:
-            order_details = order_details_dict[channel_id]
-            order = Order.objects.create(
-                total_amount = order_details["total_amount"],
+        order = Order.objects.create(
+                total_amount = total,
                 user = user,
             )
-            order.save()
+        order.save()
+        for channel_id in order_details_dict:
+            order_details = order_details_dict[channel_id]
+            
             result_orders[channel_id] = {'order' : order, 'order_items' : []}
             for item in order_details['items']:
                 order_item = OrderItem.objects.create(
@@ -211,15 +213,22 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
                 order.payment_status = event_str_value
                 order.save()    
 
-        return Response({"message" : "payment save successfully"}, status=status.HTTP_202_ACCEPTED)
-
+        return Response({"message" : "payment saved successfully"}, status=status.HTTP_202_ACCEPTED)
 
 
 class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
     serializer_class = OrderItemSerializer
 
     def get_queryset(self):
         user = self.request.user
         return OrderItem.objects.filter(order__user=user)
 
+class OrderItemViewSetForChannel(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,IsOrderItemForChannelOwner)
+    serializer_class = OrderItemSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        channel = Channel.objects.get(owner=user)
+        return OrderItem.objects.filter(product__channel=channel)

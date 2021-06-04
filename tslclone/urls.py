@@ -13,7 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from apps.checkout.views import EditCartViewSet, OrderItemViewSet, OrderViewSet
+from django import urls
+from apps.checkout.views import EditCartViewSet, OrderItemViewSet, OrderItemViewSetForChannel, OrderViewSet
 from django.views.generic import base
 from apps.shows.models import Show
 from django.contrib import admin
@@ -39,14 +40,17 @@ router.register(r'order-items', OrderItemViewSet, basename='order-item')
 
 
 channels_edit_router = DefaultRouter()
-channels_edit_router.register(r'channels', EditChannelViewSet, basename='editchannel')
+channels_edit_router.register(r'channels', EditChannelViewSet, basename='edit-channel')
 
 products_edit_router = DefaultRouter()
-products_edit_router.register(r'products', EditProductViewSet, basename="editproduct")
+products_edit_router.register(r'products', EditProductViewSet, basename="edit-product")
 
 shows_edit_router = DefaultRouter()
-shows_edit_router.register(r'shows', EditShowViewSet, basename="editshow")
+shows_edit_router.register(r'shows', EditShowViewSet, basename="edit-show")
 # router.register(r'videos', VideoViewSet, basename="video")
+
+order_items_for_channel_router = DefaultRouter()
+order_items_for_channel_router.register(r'order-items', OrderItemViewSetForChannel, basename="order-item-for-seller")
 
 urlpatterns = []
 urlpatterns += router.urls
@@ -56,8 +60,9 @@ urlpatterns += [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('users/', include(channels_edit_router.urls)),
-    path('channels/<int:channel_id>/',include(products_edit_router.urls)),
+    path('channels/<int:channel_id>/', include(products_edit_router.urls)),
     path('channels/<int:channel_id>/', include(shows_edit_router.urls)),
+    path('channels/<int:channel_id>/', include(order_items_for_channel_router.urls)),
     path('channel-details/<int:channel_id>/', get_aws_channel),
     path('channel-details/<int:channel_id>/stream/', get_aws_stream),
     path('channel-details/<int:channel_id>/stream-key/', get_aws_stream_key),

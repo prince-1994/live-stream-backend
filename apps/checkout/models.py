@@ -1,8 +1,10 @@
+from os import read
 from apps.payout.models import Commission
 from apps.profiles.models import Address
 from django.db import models
 from apps.users.models import User
 from apps.products.models import Product
+from apps.channels.models import Channel
 
 
 class CartItem(models.Model):
@@ -76,6 +78,9 @@ class OrderItemStatus(models.Model):
     value = models.CharField(max_length=1,choices=STATUS_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('order_item', 'value',)
 
     def __str__(self) -> str:
         return f"{self.value} - {self.date}"

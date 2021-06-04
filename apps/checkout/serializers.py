@@ -41,15 +41,15 @@ class OrderItemSerializer(serializers.ModelSerializer):
     product=CartProductSerializer(read_only=True)
     class Meta:
         model = OrderItem
-        fields = ('id', 'product', 'order', 'price', 'selling_price', 'quantity', 'address')
-        read_only_fields = ('product', 'price', 'order', 'selling_price', 'quantity', 'address')
-        depth = 1
+        fields = ('id', 'product', 'order', 'price', 'total_amount', 'selling_price', 'quantity', 'address')
+        read_only_fields = ('product', 'price', 'order', 'total_amount', 'selling_price', 'quantity', 'address')
 
 class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(read_only=True, many=True)
     class Meta:
         model = Order
-        fields = ('id', 'total_amount_collected', 'payment_date')
-        read_only_fields = ('total_amount_collected', 'payment_date')
+        fields = ('id', 'user', 'total_amount', 'payment_status', 'items')
+        read_only_fields = ('user', 'total_amount', 'payment_status', 'items')
 
 class CreateOrderSerializer(serializers.Serializer):
     product = serializers.IntegerField()
