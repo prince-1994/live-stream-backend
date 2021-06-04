@@ -1,3 +1,4 @@
+from apps.profiles.models import Address
 from django.db import models
 from django.db.models import fields
 from rest_framework.decorators import action
@@ -7,6 +8,7 @@ from apps.channels.models import Channel
 from apps.products.models import Product
 from rest_framework import serializers
 from apps.checkout.models import CartItem, Order, OrderItem
+from apps.profiles.serializers import EditAddressSerializer
 
 
 # cart related serializers
@@ -39,6 +41,7 @@ class EditCartSerializer(serializers.ModelSerializer):
 # order related serializer
 class OrderItemSerializer(serializers.ModelSerializer):
     product=CartProductSerializer(read_only=True)
+    address=EditAddressSerializer(read_only=True)
     class Meta:
         model = OrderItem
         fields = ('id', 'product', 'order', 'price', 'total_amount', 'selling_price', 'quantity', 'address')
@@ -48,8 +51,8 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(read_only=True, many=True)
     class Meta:
         model = Order
-        fields = ('id', 'user', 'total_amount', 'payment_status', 'items')
-        read_only_fields = ('user', 'total_amount', 'payment_status', 'items')
+        fields = ('id', 'user', 'total_amount', 'payment_status', 'items', 'created_at')
+        read_only_fields = ('user', 'total_amount', 'payment_status', 'items', 'created_at')
 
 class CreateOrderSerializer(serializers.Serializer):
     product = serializers.IntegerField()
