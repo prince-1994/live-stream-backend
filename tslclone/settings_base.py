@@ -186,6 +186,8 @@ SITE_NAME = os.environ.get('DJANGO_SITE_NAME')
 # AWS_SES_REGION_NAME = os.environ.get('AWS_SES_REGION')
 # AWS_SES_REGION_ENDPOINT = os.environ.get('AWS_SES_HOST')
 
+AWS_S3_RECORDING_CONFIGURATION = os.environ.get('AWS_S3_RECORDING_CONFIGURATION')
+
 EMAIL_PORT = os.environ.get('AWS_SES_PORT')
 EMAIL_HOST = os.environ.get('AWS_SES_HOST')
 EMAIL_HOST_USER = os.environ.get('AWS_SES_ACCESS_KEY_ID')

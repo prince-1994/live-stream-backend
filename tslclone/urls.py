@@ -22,7 +22,7 @@ from django.urls import path
 from django.urls.conf import include
 from apps.channels.views import ChannelViewSet, EditChannelViewSet, get_aws_channel, get_aws_stream_key, get_aws_stream
 from apps.products.views import CategoryViewSet, ProductViewSet, EditProductViewSet
-from apps.shows.views import ShowViewSet, EditShowViewSet
+from apps.shows.views import ShowViewSet, EditShowViewSet, EditVideoViewSet
 from apps.profiles.views import EditAddressViewset
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
@@ -49,6 +49,9 @@ shows_edit_router = DefaultRouter()
 shows_edit_router.register(r'shows', EditShowViewSet, basename="edit-show")
 # router.register(r'videos', VideoViewSet, basename="video")
 
+videos_edit_router = DefaultRouter()
+videos_edit_router.register(r'videos', EditVideoViewSet, basename='edit-videos')
+
 order_items_for_channel_router = DefaultRouter()
 order_items_for_channel_router.register(r'order-items', OrderItemViewSetForChannel, basename="order-item-for-seller")
 
@@ -62,6 +65,7 @@ urlpatterns += [
     path('users/', include(channels_edit_router.urls)),
     path('channels/<int:channel_id>/', include(products_edit_router.urls)),
     path('channels/<int:channel_id>/', include(shows_edit_router.urls)),
+    path('channels/<int:channel_id>/', include(videos_edit_router.urls)),
     path('channels/<int:channel_id>/', include(order_items_for_channel_router.urls)),
     path('channel-details/<int:channel_id>/', get_aws_channel),
     path('channel-details/<int:channel_id>/stream/', get_aws_stream),

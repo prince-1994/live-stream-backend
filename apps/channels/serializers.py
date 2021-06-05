@@ -2,6 +2,7 @@ from botocore import model
 from rest_framework import serializers
 from .models import Channel
 import boto3
+from django.conf import settings
 
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,6 +32,7 @@ class EditChannelSerializer(serializers.ModelSerializer):
             name=alphanumeric, 
             latencyMode='LOW',
             type='BASIC',
+            recordingConfigurationArn=settings.AWS_S3_RECORDING_CONFIGURATION
         )
         obj = Channel.objects.create(
             owner=user,

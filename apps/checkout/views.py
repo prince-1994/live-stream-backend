@@ -10,10 +10,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
-from tslclone.settings import STRIPE_SECRET_KEY, STRIPE_ORDERS_ENDPOINT_SECRET
+from django.conf import settings
 import stripe
 
-stripe.api_key = STRIPE_SECRET_KEY
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class EditCartViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -56,6 +56,8 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         items = serializer.validated_data
         user = self.create_stripe_customer_if_not_present(request.user)
         (order_details_dict, total) = self.get_all_order_details(items=items,user=user)
+        if total <= 0:
+            return Response({"error" : "total cart value can not be less than or equal to 0"}, status=status.HTTP_400_BAD_REQUEST)
         result_orders = self.create_all_orders(user, order_details_dict, total)
         metadata = {}
         i = 0
@@ -64,11 +66,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             order_items = order_dict["order_items"]
             for item in order_items:
                 metadata[f'channel_{channel_id}_order_{order.id}_items_{item.id}'] = item.total_amount
-            i+=1
-
-        if total <= 0:
-            return Response({"error" : "total cart value can not be less than or equal to 0"}, status=status.HTTP_400_BAD_REQUEST)
-        
+            i+=1 
         response = stripe.PaymentIntent.create(
             amount=int(total*100),
             currency="inr",
@@ -182,7 +180,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             event = stripe.Webhook.construct_event(
                 payload, 
                 sig_header,
-                STRIPE_ORDERS_ENDPOINT_SECRET)
+                settings.STRIPE_ORDERS_ENDPOINT_SECRET)
         except ValueError as e:
             # Invalid payload
             return Response({"error" : "stripe event object not found"},status=status.HTTP_400_BAD_REQUEST)
