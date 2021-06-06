@@ -23,7 +23,7 @@ class IVSVideo(models.Model):
         ('SF', 'Start Failed'),
         ('EF', 'End Failed')
     ]
-    aws_stream_id = models.CharField(max_length=100)
+    aws_stream = models.CharField(max_length=100)
     recording_duration = models.IntegerField()
     recording_status = models.CharField(max_length=2, choices=RECORDING_STATUS_CHOICES)
     show = models.OneToOneField(Show, related_name="video", on_delete=models.CASCADE, null=True, default=None)
@@ -34,4 +34,4 @@ class IVSVideo(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.channel.name} - {self.aws_stream_id}"
+        return f"{self.channel.name} - {self.aws_stream}"

@@ -4,6 +4,7 @@ from apps.products.models import Product
 from rest_framework import serializers
 from .models import IVSVideo, Show
 from apps.channels.models import Channel
+from django.conf import settings
 
 class EditShowSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,6 +37,7 @@ class ShowSerializer(serializers.ModelSerializer):
         depth = 1
 
 class IVSVideoSerializer(serializers.ModelSerializer):
+    cdn = serializers.ReadOnlyField(default=settings.AWS_IVS_VIDEO_CDN)
     class Meta:
         model = IVSVideo
-        fields = ('id', 'aws_stream_id', 'recording_duration', 'recording_status', 'show', 'channel', 's3_path', 's3_bucket')
+        fields = ('id', 'aws_stream', 'recording_duration', 'recording_status', 'show', 'channel', 's3_path', 's3_bucket', 'cdn')

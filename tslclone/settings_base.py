@@ -187,6 +187,7 @@ SITE_NAME = os.environ.get('DJANGO_SITE_NAME')
 # AWS_SES_REGION_ENDPOINT = os.environ.get('AWS_SES_HOST')
 
 AWS_S3_RECORDING_CONFIGURATION = os.environ.get('AWS_S3_RECORDING_CONFIGURATION')
+AWS_IVS_VIDEO_CDN = os.environ.get('AWS_IVS_VIDEO_CDN')
 
 EMAIL_PORT = os.environ.get('AWS_SES_PORT')
 EMAIL_HOST = os.environ.get('AWS_SES_HOST')

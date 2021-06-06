@@ -37,9 +37,8 @@ class EditVideoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'], permission_classes=(IsAuthenticatedOrReadOnly, IsVideoOwner), url_path='without-show')
     def videos_without_show(self, request, *args, **kwargs):
-        videos = self.get_queryset()
-        serializer = IVSVideoSerializer(videos)
-        print(serializer.data)
+        videos = self.get_queryset().filter(show=None)
+        serializer = IVSVideoSerializer(videos, many=True)
         return Response(serializer.data)
 
 class ShowViewSet(viewsets.ReadOnlyModelViewSet):
@@ -74,10 +73,10 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({"error" : "event not supported yet"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def handle_stream_recording_start(self, channel, data):
-        found_videos = channel.videos.filter(aws_stream_id=data['stream_id'])
+        found_videos = channel.videos.filter(aws_stream=data['stream_id'])
         if len(found_videos) > 0: return
         video = IVSVideo.objects.create(
-            aws_stream_id=data['stream_id'],
+            aws_stream=data['stream_id'],
             recording_status='S',
             s3_path=data['recording_s3_key_prefix'],
             s3_bucket = data['recording_s3_bucket_name'],
@@ -87,10 +86,10 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
         video.save()
 
     def handle_stream_recording_start_failed(self, channel, data):
-        found_videos = channel.videos.filter(aws_stream_id=data['stream_id'])
+        found_videos = channel.videos.filter(aws_stream=data['stream_id'])
         if len(found_videos) > 0: return
         video = IVSVideo.objects.create(
-            aws_stream_id=data['stream_id'],
+            aws_stream=data['stream_id'],
             recording_status='SF',
             s3_bucket = data['recording_s3_bucket_name'],
             s3_path=None,
@@ -100,34 +99,34 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
         video.save()
 
     def handle_stream_recording_end(self, channel, data):
-        found_videos = channel.videos.filter(aws_stream_id=data['stream_id'])
+        found_videos = channel.videos.filter(aws_stream=data['stream_id'])
         if len(found_videos) > 0:
-            video = channel.videos.get(aws_stream_id=data['stream_id'])
+            video = channel.videos.get(aws_stream=data['stream_id'])
             video.recording_status = 'E'
             video.recording_duration=data['recording_duration_ms']
         else :
             video = IVSVideo.objects.create(
-                aws_stream_id=data['stream_id'],
+                aws_stream=data['stream_id'],
                 recording_status='E',
                 s3_bucket = data['recording_s3_bucket_name'],
-                s3_path=data['recording_s3_bucket_name'],
+                s3_path=data['recording_s3_key_prefix'],
                 channel = channel,
                 recording_duration=data['recording_duration_ms']
             )
         video.save()
     
     def handle_stream_recording_end_failed(self, channel, data):
-        found_videos = channel.videos.filter(aws_stream_id=data['stream_id'])
+        found_videos = channel.videos.filter(aws_stream=data['stream_id'])
         if len(found_videos) > 0:
-            video = channel.videos.get(aws_stream_id=data['stream_id'])
+            video = channel.videos.get(aws_stream=data['stream_id'])
             video.recording_status = 'EF'
             video.recording_duration=data['recording_duration_ms']
         else :
             video = IVSVideo.objects.create(
-                aws_stream_id=data['stream_id'],
+                aws_stream=data['stream_id'],
                 recording_status='EF',
                 s3_bucket = data['recording_s3_bucket_name'],
-                s3_path=data['recording_s3_bucket_name'],
+                s3_path=data['recording_s3_key_prefix'],
                 channel = channel,
                 recording_duration=data['recording_duration_ms']
             )
