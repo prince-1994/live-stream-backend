@@ -27,17 +27,18 @@ class EditShowSerializer(serializers.ModelSerializer):
             obj.products.add(product)
         return obj
 
-class ShowSerializer(serializers.ModelSerializer):
-    channel = ChannelSerializer(read_only=True)
-
-    class Meta:
-        model = Show
-        fields = ('id', 'name', 'description', 'channel', 'display_pic', 'products', 'time')
-        read_only_fields = ('name', 'description', 'channel', 'display_pic', 'products', 'time')
-        depth = 1
 
 class IVSVideoSerializer(serializers.ModelSerializer):
     cdn = serializers.ReadOnlyField(default=settings.AWS_IVS_VIDEO_CDN)
     class Meta:
         model = IVSVideo
         fields = ('id', 'aws_stream', 'recording_duration', 'recording_status', 'show', 'channel', 's3_path', 's3_bucket', 'cdn')
+
+class ShowSerializer(serializers.ModelSerializer):
+    channel = ChannelSerializer(read_only=True)
+    video = IVSVideoSerializer(read_only=True)
+    class Meta:
+        model = Show
+        fields = ('id', 'name', 'description', 'channel', 'display_pic', 'products', 'time', 'video')
+        read_only_fields = ('name', 'description', 'channel', 'display_pic', 'products', 'time', 'video')
+        depth = 1
