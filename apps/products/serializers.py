@@ -14,7 +14,7 @@ class EditProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'sku_id', 'category')
+        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'sku_id', 'category', 'selling_price')
         read_only_fields = ('channel',)
 
     def _user(self):
@@ -41,5 +41,5 @@ class ProductSerializer(serializers.ModelSerializer) :
     category = serializers.StringRelatedField()
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category')
-        read_only_fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category')
+        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price')
+        read_only_fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price')
