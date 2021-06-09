@@ -65,9 +65,9 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ('user', 'total_amount', 'payment_status', 'items', 'created_at')
 
 class CreateOrderItemSerializer(serializers.Serializer):
-    class Meta:
-        model = OrderItem
-        fields = ('product', 'quantity', 'address')
+    product = serializers.IntegerField()
+    quantity = serializers.IntegerField()
+    address = serializers.IntegerField()
 
 class EditOrderItemStatusSerializer(serializers.ModelSerializer):
     value = ChoiceField(choices=OrderItemStatus.STATUS_CHOICES)

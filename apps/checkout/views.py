@@ -142,9 +142,9 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         order_details_dict = {}
         total = 0
         for item in items:
-            product = item["product"]
+            product = Product.objects.get(pk=item["product"])
             quantity = item["quantity"]
-            address = item["address"]
+            address = Address.objects.get(pk=item["address"])
             if address.user != user :
                 return Response({"error" : "Address not found"}, status=status.HTTP_400_BAD_REQUEST)
             
