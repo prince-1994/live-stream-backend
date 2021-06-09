@@ -68,10 +68,10 @@ class OrderItem(models.Model):
 
 class OrderItemStatus(models.Model):
     STATUS_CHOICES = [
-        ('P', 'Placed'),
-        ('C', 'Canceled'),
-        ('S', 'Shipped'),
-        ('D', 'Delivered'),
+        ('P', 'placed'),
+        ('C', 'canceled'),
+        ('S', 'shipped'),
+        ('D', 'delivered'),
     ]
     order_item = models.ForeignKey(OrderItem, related_name="statuses", on_delete=models.CASCADE)
     date = models.DateTimeField()

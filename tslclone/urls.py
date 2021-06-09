@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django import urls
-from apps.checkout.views import EditCartViewSet, OrderItemViewSet, OrderItemViewSetForChannel, OrderViewSet
+from apps.checkout.views import EditCartViewSet, OrderItemViewSet, OrderItemViewSetForChannel, OrderViewSet, EditOrderItemStatusViewSetForChannel
 from django.views.generic import base
 from apps.shows.models import Show
 from django.contrib import admin
@@ -53,7 +53,10 @@ videos_edit_router = DefaultRouter()
 videos_edit_router.register(r'videos', EditVideoViewSet, basename='edit-videos')
 
 order_items_for_channel_router = DefaultRouter()
-order_items_for_channel_router.register(r'order-items', OrderItemViewSetForChannel, basename="order-item-for-seller")
+order_items_for_channel_router.register(r'order-items', OrderItemViewSetForChannel, basename="order-items-for-seller")
+
+order_item_statuses_for_channel_router = DefaultRouter()
+order_item_statuses_for_channel_router.register(r'statuses', EditOrderItemStatusViewSetForChannel, basename="order-item-statuses-for-seller")
 
 urlpatterns = []
 urlpatterns += router.urls
@@ -67,6 +70,7 @@ urlpatterns += [
     path('channels/<int:channel_id>/', include(shows_edit_router.urls)),
     path('channels/<int:channel_id>/', include(videos_edit_router.urls)),
     path('channels/<int:channel_id>/', include(order_items_for_channel_router.urls)),
+    path('channels/<int:channel_id>/order-items/<int:order_item_id>/', include(order_item_statuses_for_channel_router.urls)),
     path('channel-details/<int:channel_id>/', get_aws_channel),
     path('channel-details/<int:channel_id>/stream/', get_aws_stream),
     path('channel-details/<int:channel_id>/stream-key/', get_aws_stream_key),

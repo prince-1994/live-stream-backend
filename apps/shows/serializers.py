@@ -1,3 +1,4 @@
+from rest_framework.fields import ChoiceField
 from apps.channels.serializers import ChannelSerializer
 from django.http.response import Http404
 from apps.products.models import Product
@@ -30,6 +31,7 @@ class EditShowSerializer(serializers.ModelSerializer):
 
 class IVSVideoSerializer(serializers.ModelSerializer):
     cdn = serializers.ReadOnlyField(default=settings.AWS_IVS_VIDEO_CDN)
+    recording_status = ChoiceField(choices=IVSVideo.RECORDING_STATUS_CHOICES)
     class Meta:
         model = IVSVideo
         fields = ('id', 'aws_stream', 'recording_duration', 'recording_status', 'show', 'channel', 's3_path', 's3_bucket', 'cdn')

@@ -1,11 +1,11 @@
-from apps.checkout.permissions import IsOrderItemForChannelOwner
+from apps.checkout.permissions import IsOrderItemForChannelOwner, IsOrderItemStatusForChannelOwner
 from apps.channels.models import Channel
 from os import stat
 from apps.profiles.models import Address
 from apps.payout.models import Commission
 from apps.products.models import Product
-from apps.checkout.models import CartItem, Order, OrderItem
-from apps.checkout.serializers import CartSerializer, EditCartSerializer, OrderItemSerializer, OrderSerializer, CreateOrderSerializer
+from apps.checkout.models import CartItem, Order, OrderItem, OrderItemStatus
+from apps.checkout.serializers import CartSerializer, EditCartSerializer, OrderItemSerializer, OrderSerializer, CreateOrderItemSerializer, EditOrderItemStatusSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -51,7 +51,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False, methods=['post'], permission_classes=(IsAuthenticated,), url_path='create-order')
     def create_order(self, request, *args, **kwargs):
-        serializer = CreateOrderSerializer(data=request.data, many=True)
+        serializer = CreateOrderItemSerializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
         items = serializer.validated_data
         user = self.create_stripe_customer_if_not_present(request.user)
@@ -142,9 +142,9 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         order_details_dict = {}
         total = 0
         for item in items:
-            product = Product.objects.get(pk=item["product"])
+            product = item["product"]
             quantity = item["quantity"]
-            address = Address.objects.get(pk=item["address"])
+            address = item["address"]
             if address.user != user :
                 return Response({"error" : "Address not found"}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -223,10 +223,22 @@ class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
         return OrderItem.objects.filter(order__user=user)
 
 class OrderItemViewSetForChannel(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated,IsOrderItemForChannelOwner)
+    permission_classes = (IsAuthenticated, IsOrderItemForChannelOwner)
     serializer_class = OrderItemSerializer
 
     def get_queryset(self):
         user = self.request.user
         channel = Channel.objects.get(owner=user)
         return OrderItem.objects.filter(product__channel=channel)
+
+
+class EditOrderItemStatusViewSetForChannel(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, IsOrderItemStatusForChannelOwner)
+    serializer_class = EditOrderItemStatusSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        order_item_id = self.request.parser_context.get('kwargs').get('order_item_id')
+        channel = Channel.objects.get(owner=user)
+        order_item = OrderItem.objects.filter(product__channel=channel).get(pk=order_item_id)
+        return order_item.statuses
