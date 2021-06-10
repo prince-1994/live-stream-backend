@@ -32,7 +32,10 @@ class EditChannelSerializer(serializers.ModelSerializer):
             name=alphanumeric, 
             latencyMode='LOW',
             type='BASIC',
-            recordingConfigurationArn=settings.AWS_S3_RECORDING_CONFIGURATION
+            recordingConfigurationArn=settings.AWS_S3_RECORDING_CONFIGURATION,
+            tags={
+                'env' : settings.ENV
+            }
         )
         obj = Channel.objects.create(
             owner=user,

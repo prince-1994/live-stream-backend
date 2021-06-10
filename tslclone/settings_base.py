@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from channels.apps import ChannelsConfig
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -90,8 +91,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 100
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
 }
 
 # Djoser Framework
@@ -211,3 +212,5 @@ CHANNEL_LAYERS = {
 STRIPE_PUBLISHABLE_KEY=os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY=os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_ORDERS_ENDPOINT_SECRET=os.environ.get('STRIPE_ORDERS_ENDPOINT_SECRET')
+
+ENV=os.environ.get('ENV')

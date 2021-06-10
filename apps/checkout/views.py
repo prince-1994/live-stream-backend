@@ -238,7 +238,7 @@ class EditOrderItemStatusViewSetForChannel(viewsets.ModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
-        order_item_id = self.request.parser_context.get('kwargs').get('order_item_id')
+        order_item_id = self.kwargs.get('order_item_id')
         channel = Channel.objects.get(owner=user)
         order_item = OrderItem.objects.filter(product__channel=channel).get(pk=order_item_id)
         return order_item.statuses
