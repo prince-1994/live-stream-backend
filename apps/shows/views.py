@@ -25,7 +25,7 @@ class EditShowViewSet(viewsets.ModelViewSet):
         all_shows = self.get_queryset()
         shows = all_shows.filter(video=None, time__lte=datetime.now())
         serializer = EditShowSerializer(shows, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'results' : serializer.data})
 
 class EditVideoViewSet(viewsets.ModelViewSet):
     serializer_class = IVSVideoSerializer
@@ -39,7 +39,7 @@ class EditVideoViewSet(viewsets.ModelViewSet):
     def videos_without_show(self, request, *args, **kwargs):
         videos = self.get_queryset().filter(show=None)
         serializer = IVSVideoSerializer(videos, many=True)
-        return Response(serializer.data)
+        return Response({ 'results' : serializer.data })
 
 class ShowViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ShowSerializer
