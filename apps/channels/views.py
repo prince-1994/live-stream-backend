@@ -1,5 +1,6 @@
+from re import search
 from rest_framework.response import Response
-from rest_framework import viewsets,status
+from rest_framework import viewsets,status, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from .models import Channel
@@ -20,6 +21,8 @@ class ChannelViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ChannelSerializer
     permission_classes = (AllowAny,)
     queryset = Channel.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
 
 @api_view()
 @permission_classes([AllowAny,])

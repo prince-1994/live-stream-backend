@@ -1,5 +1,5 @@
 from django.http.response import Http404
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from .models import Product
 from .serializers import *
 from .permisssions import IsProductOwner
@@ -20,6 +20,8 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
     queryset = Product.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer

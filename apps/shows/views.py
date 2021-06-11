@@ -1,5 +1,5 @@
 from django.core.checks.messages import Error
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -45,6 +45,8 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ShowSerializer
     permission_classes = (AllowAny,)
     queryset = Show.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
 
     @action(detail=False, methods=['post'], permission_classes=(), url_path='videos/webhook')
     def webhook(self, request, *args, **kwargs):
