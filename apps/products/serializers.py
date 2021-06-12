@@ -1,12 +1,7 @@
 from apps.channels.models import Channel
 from rest_framework import serializers
-from .models import Category, Product, ProductImage
+from .models import Category, Product
 from taggit_serializer.serializers import (TaggitSerializer, TagListSerializerField)
-
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = ('image',)
 
 class EditProductSerializer(TaggitSerializer,serializers.ModelSerializer):
     # images = ProductImageSerializer(many=True)

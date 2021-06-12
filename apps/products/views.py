@@ -1,4 +1,3 @@
-from django.http.response import Http404
 from rest_framework import viewsets, status, filters
 from .models import Product
 from .serializers import *
@@ -6,7 +5,6 @@ from .permisssions import IsProductOwner
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 class EditProductViewSet(viewsets.ModelViewSet):
     serializer_class = EditProductSerializer
@@ -27,25 +25,6 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (AllowAny,)
     queryset = Category.objects.all()
-
-class ProductImagesList(APIView):
-    def get(self, request, product_id):
-        images = ProductImage.objects.filter(product__id = product_id)
-        serializer = ProductImageSerializer(images, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, product_id):
-        owner = request.user
-        product = Product.objects.filter(id = product_id).first()
-        if product is None:
-            raise Http404
-        serializer = ProductImageSerializer(data=request.data, many=True)
-        if serializer.is_valid():
-            serializer.save()
-        print(serializer.data)
-        return Response(serializer.data)
-    
-    
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

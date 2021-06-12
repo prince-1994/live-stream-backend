@@ -23,10 +23,6 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True) 
     tags = TaggableManager()
-    
+
     def __str__(self) -> str:
         return self.name
-
-class ProductImage(models.Model):
-    image = models.ImageField()
-    product = models.ForeignKey(Product, related_name='productImages', on_delete=models.CASCADE)
