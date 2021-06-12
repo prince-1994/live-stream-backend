@@ -1,20 +1,19 @@
-from django.db.models import fields
-from rest_framework.utils import model_meta
 from apps.channels.models import Channel
 from rest_framework import serializers
 from .models import Category, Product, ProductImage
+from taggit_serializer.serializers import (TaggitSerializer, TagListSerializerField)
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = ('image',)
 
-class EditProductSerializer(serializers.ModelSerializer):
+class EditProductSerializer(TaggitSerializer,serializers.ModelSerializer):
     # images = ProductImageSerializer(many=True)
-
+    tags = TagListSerializerField()
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'sku_id', 'category', 'selling_price')
+        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'sku_id', 'category', 'selling_price', 'tags')
         read_only_fields = ('channel',)
 
     def _user(self):
@@ -37,9 +36,10 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name');
 
-class ProductSerializer(serializers.ModelSerializer) :
+class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
     category = serializers.StringRelatedField()
+    tags = TagListSerializerField()
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price')
-        read_only_fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price')
+        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price', 'tags')
+        read_only_fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price', 'tags')

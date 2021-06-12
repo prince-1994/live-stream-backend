@@ -28,7 +28,7 @@ class IVSVideo(models.Model):
     recording_status = models.CharField(max_length=2, choices=RECORDING_STATUS_CHOICES)
     show = models.OneToOneField(Show, related_name="video", on_delete=models.CASCADE, null=True, default=None, blank=True)
     channel=models.ForeignKey(Channel, related_name="videos", on_delete=models.CASCADE)
-    s3_path=models.CharField(max_length=200, null=True)
+    s3_path=models.CharField(max_length=200, null=True, blank=True)
     s3_bucket=models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

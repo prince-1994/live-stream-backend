@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'channels',
     'django_filters',
+    'taggit',
+    'taggit_serializer',
 
     # local
     "apps.users.apps.UsersConfig",
@@ -192,6 +194,7 @@ SITE_NAME = os.environ.get('DJANGO_SITE_NAME')
 # AWS_SES_REGION_ENDPOINT = os.environ.get('AWS_SES_HOST')
 
 AWS_S3_RECORDING_CONFIGURATION = os.environ.get('AWS_S3_RECORDING_CONFIGURATION')
+AWS_S3_CHANNEL_TYPE = os.environ.get('AWS_S3_CHANNEL_TYPE')
 AWS_IVS_VIDEO_CDN = os.environ.get('AWS_IVS_VIDEO_CDN')
 
 EMAIL_PORT = os.environ.get('AWS_SES_PORT')
@@ -218,3 +221,5 @@ STRIPE_SECRET_KEY=os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_ORDERS_ENDPOINT_SECRET=os.environ.get('STRIPE_ORDERS_ENDPOINT_SECRET')
 
 ENV=os.environ.get('ENV')
+
+TAGGIT_CASE_INSENSITIVE = True

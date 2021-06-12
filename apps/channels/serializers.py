@@ -31,7 +31,7 @@ class EditChannelSerializer(serializers.ModelSerializer):
         response = ivs_client.create_channel(
             name=alphanumeric, 
             latencyMode='LOW',
-            type='BASIC',
+            type=settings.AWS_S3_CHANNEL_TYPE,
             recordingConfigurationArn=settings.AWS_S3_RECORDING_CONFIGURATION,
             tags={
                 'env' : settings.ENV

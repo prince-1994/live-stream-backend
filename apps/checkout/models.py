@@ -34,10 +34,10 @@ class Order(models.Model):
         ('sc', 'succeeded'),
     ]
 
-    user = models.ForeignKey(User, related_name="orders", on_delete=models.PROTECT)
+    user = models.ForeignKey(User, related_name="orders", on_delete=models.CASCADE)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    stripe_payment_intent = models.CharField(max_length=100, default=None, null=True)
-    payment_status = models.CharField(max_length=2, choices=PAYMENT_STATUS_CHOICES, null=True, default=None)
+    stripe_payment_intent = models.CharField(max_length=100, default=None, null=True, blank=True)
+    payment_status = models.CharField(max_length=2, choices=PAYMENT_STATUS_CHOICES, null=True, default=None, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # can implement coupons for order
@@ -47,14 +47,14 @@ class Order(models.Model):
     
 
 class OrderItem(models.Model):
-    product = models.ForeignKey(Product, related_name="order_items", on_delete=models.PROTECT)
-    order = models.ForeignKey(Order, related_name="items", on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, related_name="order_items", on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    commission = models.ForeignKey(Commission, related_name='order_items', on_delete=models.PROTECT)
+    commission = models.ForeignKey(Commission, related_name='order_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    address = models.ForeignKey(Address, related_name="orders", on_delete=models.PROTECT)
+    address = models.ForeignKey(Address, related_name="orders", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
