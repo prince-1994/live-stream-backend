@@ -9,8 +9,8 @@ class Channel(models.Model):
     background_pic = models.ImageField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    arn = models.CharField( max_length=100,null=True)
-    stream_key_arn = models.CharField(max_length=100,null=True)
+    arn = models.CharField( max_length=100,null=True, blank=True)
+    stream_key_arn = models.CharField(max_length=100,null=True, blank=True)
 
     def __str__(self):
         return self.name
