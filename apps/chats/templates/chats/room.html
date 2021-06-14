@@ -19,11 +19,12 @@
             + window.location.host
             + '/ws/chat/'
             + roomName
-            + '/?token=1c2b3e6da7514cd6166235736d3e0c2be7a78b8f'
+            + '/'
         );
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            console.log(data)
             if (!Array.isArray(data)) {
                 document.querySelector('#chat-log').value += (data.message + '\n');
             } else {

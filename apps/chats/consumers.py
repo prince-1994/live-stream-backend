@@ -18,14 +18,24 @@ class ShowConsumer(JsonWebsocketConsumer):
             first_name = self.user.first_name or "" 
             last_name = self.user.last_name or ""
             name =  f"{first_name} {last_name}"
+
             data = {
+                'id' : message.id,
                 'name' : name,
                 'message' : message.content,
                 'timestamp': str(message.timestamp),
-                'profile_pic' : self.user.profile_pic.url,
             }
-            print(data)
-            self.send_json(data)
+            if self.user.profile_pic != None:
+                data['profile_pic'] = self.user.profile_pic.url
+
+            print(data, self.channel_layer)
+            async_to_sync(self.channel_layer.group_send)(
+                self.show_ws_group_name,
+                {
+                    'type' : 'chat_message',
+                    'data' : data
+                }
+            )
     
     def chat_load_messages(self, data):
         no_of_messages = data.get("no_of_messages") 
@@ -40,12 +50,15 @@ class ShowConsumer(JsonWebsocketConsumer):
         for message in messages:
             author = message.user
             name = (author.first_name or "") + (author.last_name or "")
-            message_data.append({
+            data = {
+                'id' : message.id,
                 'name' : name,
                 'message' : message.content,
                 'timestamp': str(message.timestamp),
-                'profile_pic' : author.profile_pic.url,
-            })
+            }
+            if self.user.profile_pic != None:
+                data['profile_pic'] = self.user.profile_pic.url
+            message_data.append(data)
         # print(messages)
         self.send_json(message_data)
 
@@ -60,7 +73,7 @@ class ShowConsumer(JsonWebsocketConsumer):
         try:
             self.show = Show.objects.get(pk=show_id)
             
-            self.show_ws_group_name = f"ws_{self.show.name}_{self.show.id}"
+            self.show_ws_group_name = f"ws_{self.show.id}"
             async_to_sync(self.channel_layer.group_add)(
                 self.show_ws_group_name, self.channel_name
             )
@@ -85,3 +98,8 @@ class ShowConsumer(JsonWebsocketConsumer):
             handler(self, data)
         else:
             self.send_json({"error" : "Handler not found for command type"})
+    
+    def chat_message(self, event):
+        data = event['data']
+        print("chat_message", data)
+        self.send_json(data)
