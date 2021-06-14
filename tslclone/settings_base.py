@@ -207,14 +207,6 @@ DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL')
 
 ASGI_APPLICATION = 'tslclone.asgi.application'
 
-CHANNEL_LAYERS = {
-    'default' : {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts' : [('127.0.0.1', 6379)],
-        }
-    }
-}
 
 STRIPE_PUBLISHABLE_KEY=os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY=os.environ.get('STRIPE_SECRET_KEY')

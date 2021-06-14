@@ -9,6 +9,7 @@
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
+    <input id="chat-message-load" type="button" value="load">
     {{ room_name|json_script:"room-name" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -18,12 +19,20 @@
             + window.location.host
             + '/ws/chat/'
             + roomName
-            + '/'
+            + '/?token=1c2b3e6da7514cd6166235736d3e0c2be7a78b8f'
         );
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            if (!Array.isArray(data)) {
+                document.querySelector('#chat-log').value += (data.message + '\n');
+            } else {
+                for (const item of data) {
+                    console.log(item);
+                    document.querySelector('#chat-log').value += (item.message + '\n');
+                }
+            }
+            
         };
 
         chatSocket.onclose = function(e) {
@@ -41,7 +50,19 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
+                'command':'chat_send_message',
                 'message': message
+            }));
+            messageInputDom.value = '';
+        };
+
+        document.querySelector('#chat-message-load').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'command':'chat_load_messages',
+                'no_of_messages': 10,
+                'last_timestamp' : new Date(),
             }));
             messageInputDom.value = '';
         };
