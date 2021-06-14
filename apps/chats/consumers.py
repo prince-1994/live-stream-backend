@@ -49,15 +49,18 @@ class ShowConsumer(JsonWebsocketConsumer):
         
         for message in messages:
             author = message.user
-            name = (author.first_name or "") + (author.last_name or "")
+            first_name = author.first_name or "" 
+            last_name = author.last_name or ""
+            name =  f"{first_name} {last_name}"
+
             data = {
                 'id' : message.id,
                 'name' : name,
                 'message' : message.content,
                 'timestamp': str(message.timestamp),
             }
-            if self.user.profile_pic != None:
-                data['profile_pic'] = self.user.profile_pic.url
+            if author.profile_pic != None:
+                data['profile_pic'] = author.profile_pic.url
             message_data.append(data)
         # print(messages)
         self.send_json(message_data)
@@ -93,6 +96,7 @@ class ShowConsumer(JsonWebsocketConsumer):
         command_type = data.get('command')
         if not command_type:
             self.send_json({'error' : 'Command type not found'})
+            return
         handler = self.commands.get(command_type)
         if handler:
             handler(self, data)
