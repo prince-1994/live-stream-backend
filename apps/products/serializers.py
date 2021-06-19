@@ -37,4 +37,4 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
     class Meta:
         model = Product
         fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price', 'tags')
-        read_only_fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price', 'tags')
+        read_only_fields = ('channel',)

@@ -8,7 +8,7 @@ class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
         fields = ('id', 'name', 'description', 'owner', 'display_pic', 'background_pic', 'arn',)
-        read_only_fields = ('owner',)
+        read_only_fields = ('owner', 'arn', 'stream_key_arn')
 
 class EditChannelSerializer(serializers.ModelSerializer):
     class Meta:

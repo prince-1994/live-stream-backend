@@ -11,6 +11,9 @@ from apps.channels.models import Channel
 from apps.shows.models import IVSVideo
 import json
 from datetime import datetime
+from django.http.response import Http404
+from apps.products.models import Product
+from apps.shows.serializers import WriteShowSerializer
 
 class EditShowViewSet(viewsets.ModelViewSet):
     serializer_class = EditShowSerializer
@@ -41,12 +44,61 @@ class EditVideoViewSet(viewsets.ModelViewSet):
         serializer = IVSVideoSerializer(videos, many=True)
         return Response({ 'results' : serializer.data })
 
-class ShowViewSet(viewsets.ReadOnlyModelViewSet):
+class ShowViewSet(viewsets.ModelViewSet):
     serializer_class = ShowSerializer
-    permission_classes = (AllowAny,)
-    queryset = Show.objects.all()
-    filter_backends = [filters.SearchFilter]
+    permission_classes = (IsShowOwner,)
+    filterset_fields = ['channel']
     search_fields = ['name', 'description']
+
+    def get_queryset(self):
+        is_channel_view = self.request.query_params.get('view') == 'channel'
+        if is_channel_view and self.request.user.is_authenticated:
+            channel = Channel.objects.filter(owner=self.request.user).first()
+            if not channel:
+                return Show.objects.none()
+            return Show.objects.filter(channel=channel)
+        return Show.objects.all()
+    
+    def get_serializer_class(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return ShowSerializer
+        else:
+            return WriteShowSerializer
+
+    def enrich_request_data_with_product_data(self, request, channel):
+        products = request.data.get('products')
+        if not products:
+            return
+
+        new_products = []
+        for product_id in products:
+            product = channel.products.get(pk=product_id)
+            new_products.append(product)
+        request.data['products'] = new_products
+
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        channel = Channel.objects.filter(owner=user).first()
+        if not channel:
+            return Response({"error" : "channel does not exist"}, status= status.HTTP_403_FORBIDDEN)
+        self.enrich_request_data_with_product_data(request, channel)
+        serializer = WriteShowSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        product_ids = set(product.id for product in Product.objects.filter(channel__id=channel.id))
+        add_products = serializer.validated_data.pop('products')
+        for product in add_products:
+            if product.id not in product_ids:
+                raise Http404("Product not found")
+        obj = Show.objects.create(channel=channel,**serializer.validated_data)
+        obj.save()
+        for product in add_products:
+            obj.products.add(product)
+        serializer = ShowSerializer(obj)
+        return Response(serializer.data)
+
 
     @action(detail=False, methods=['post'], permission_classes=(), url_path='videos/webhook')
     def webhook(self, request, *args, **kwargs):

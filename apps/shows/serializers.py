@@ -42,5 +42,12 @@ class ShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Show
         fields = ('id', 'name', 'description', 'channel', 'display_pic', 'products', 'time', 'video')
-        read_only_fields = ('name', 'description', 'channel', 'display_pic', 'products', 'time', 'video')
+        read_only_fields = ('channel',)
         depth = 1
+
+class WriteShowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Show
+        fields = ('id', 'name', 'description', 'channel', 'display_pic', 'products', 'time', 'video')
+        read_only_fields = ('channel',)
+                

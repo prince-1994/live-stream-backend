@@ -1,3 +1,5 @@
+from os import stat
+from botocore import serialize
 from rest_framework import viewsets, status, filters
 from .models import Product
 from .serializers import *
@@ -14,12 +16,33 @@ class EditProductViewSet(viewsets.ModelViewSet):
         channel_id = self.kwargs['channel_id']
         return Product.objects.filter(channel__id = channel_id)
 
-class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
-    permission_classes = (AllowAny,)
-    queryset = Product.objects.all()
-    filter_backends = [filters.SearchFilter]
+    permission_classes = (IsProductOwner,)
+    filterset_fields = ['channel']
     search_fields = ['name', 'description']
+
+    def get_queryset(self):
+        is_channel_view = self.request.query_params.get('view') == 'channel'
+        if is_channel_view and self.request.user.is_authenticated:
+            channel = Channel.objects.filter(owner=self.request.user).first()
+            if not channel:
+                return Product.objects.none()
+            return Product.objects.filter(channel=channel)
+        return Product.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        channel = Channel.objects.filter(owner=user).first()
+        if not channel:
+            return Response({"error" : "channel does not exist"}, status= status.HTTP_403_FORBIDDEN)
+        serializer = ProductSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        obj = Product.objects.create(channel=channel,**serializer.validated_data)
+        obj.save()
+        serializer = ProductSerializer(obj)
+        return Response(serializer.data)
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
