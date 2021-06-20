@@ -10,6 +10,7 @@ from .serializers import ChannelSerializer, EditChannelSerializer
 from .permissions import *
 import boto3
 from django.conf import settings
+from apps.payout.models import Commission
 
 class EditChannelViewSet(viewsets.ModelViewSet):
     serializer_class = EditChannelSerializer
@@ -58,6 +59,8 @@ class ChannelViewSet(viewsets.ModelViewSet):
             stream_key_arn=response.get('streamKey').get('arn'),
             **serializer.validated_data)
         obj.save()
+        commission = Commission.objects.create(channel=obj)
+        commission.save()
         serializer = ChannelSerializer(obj)
         return Response(serializer.data)
         
