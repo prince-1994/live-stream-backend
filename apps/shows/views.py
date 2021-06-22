@@ -29,38 +29,7 @@ class VideoViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Channel does not exist")
         return IVSVideo.objects.filter(channel=channel)
 
-class ShowViewSet(viewsets.ModelViewSet):
-    serializer_class = ShowSerializer
-    permission_classes = (ReadOnly|ShowEditPermission,)
-    queryset = Show.objects.all()
-    search_fields = ['name', 'description']
-    filterset_fields = {
-        'channel' : ['exact'],
-        'video' : ['exact', 'isnull']
-    }
-    
-    def get_serializer_class(self):
-        if self.request.method in permissions.SAFE_METHODS:
-            return ShowSerializer
-        else:
-            return WriteShowSerializer
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        channel = Channel.objects.filter(owner=user).first()
-        if not channel:
-            raise PermissionDenied("channel does not exist")
-        product_ids = set(product.id for product in Product.objects.filter(channel=channel))
-        add_products = serializer.validated_data.pop('products')
-        for product in add_products:
-            if product.id not in product_ids:
-                raise Http404("Product not found")
-        obj = serializer.save(channel=channel)
-        for product in add_products:
-            obj.products.add(product)
-        return super().perform_create(serializer)
-
-    @action(detail=False, methods=['post'], permission_classes=(), url_path='videos/webhook')
+    @action(detail=False, methods=['post'], permission_classes=(), url_path='webhook')
     def webhook(self, request, *args, **kwargs):
         payload = json.loads(request.body)
         detail_type = payload["detail-type"]
@@ -145,3 +114,34 @@ class ShowViewSet(viewsets.ModelViewSet):
                 recording_duration=data['recording_duration_ms']
             )
         video.save()
+
+class ShowViewSet(viewsets.ModelViewSet):
+    serializer_class = ShowSerializer
+    permission_classes = (ReadOnly|ShowEditPermission,)
+    queryset = Show.objects.all()
+    search_fields = ['name', 'description']
+    filterset_fields = {
+        'channel' : ['exact'],
+        'video' : ['exact', 'isnull']
+    }
+    
+    def get_serializer_class(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return ShowSerializer
+        else:
+            return WriteShowSerializer
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        channel = Channel.objects.filter(owner=user).first()
+        if not channel:
+            raise PermissionDenied("channel does not exist")
+        product_ids = set(product.id for product in Product.objects.filter(channel=channel))
+        add_products = serializer.validated_data.pop('products')
+        for product in add_products:
+            if product.id not in product_ids:
+                raise Http404("Product not found")
+        obj = serializer.save(channel=channel)
+        for product in add_products:
+            obj.products.add(product)
+        return super().perform_create(serializer)
