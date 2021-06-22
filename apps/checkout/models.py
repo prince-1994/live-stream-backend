@@ -1,4 +1,5 @@
 from os import read
+from typing_extensions import Required
 from apps.payout.models import Commission
 from apps.profiles.models import Address
 from django.db import models
@@ -47,6 +48,13 @@ class Order(models.Model):
     
 
 class OrderItem(models.Model):
+    STATUS_CHOICES = [
+        ('P', 'placed'),
+        ('C', 'canceled'),
+        ('S', 'shipped'),
+        ('D', 'delivered'),
+    ]
+
     product = models.ForeignKey(Product, related_name="order_items", on_delete=models.CASCADE)
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -57,7 +65,7 @@ class OrderItem(models.Model):
     address = models.ForeignKey(Address, related_name="orders", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    status = models.CharField(max_length=1,choices=STATUS_CHOICES, default='P')
     class Meta:
         constraints = [
             models.CheckConstraint(check=models.Q(quantity__gte=1), name="order_item_quantity_gte_1")
@@ -65,22 +73,3 @@ class OrderItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.product} ({self.quantity}) - {self.created_at}"
-
-class OrderItemStatus(models.Model):
-    STATUS_CHOICES = [
-        ('P', 'placed'),
-        ('C', 'canceled'),
-        ('S', 'shipped'),
-        ('D', 'delivered'),
-    ]
-    order_item = models.ForeignKey(OrderItem, related_name="statuses", on_delete=models.CASCADE)
-    date = models.DateTimeField()
-    value = models.CharField(max_length=1,choices=STATUS_CHOICES)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        unique_together = ('order_item', 'value',)
-
-    def __str__(self) -> str:
-        return f"{self.value} - {self.date}"

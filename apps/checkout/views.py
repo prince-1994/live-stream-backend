@@ -1,21 +1,23 @@
-from apps.checkout.permissions import IsOrderItemForChannelOwner, IsOrderItemStatusForChannelOwner
+from django.http import request
+from rest_framework.mixins import CreateModelMixin
+from apps.checkout.permissions import OrderItemEditPermission, OrderItemStatusEditPermission
 from apps.channels.models import Channel
-from os import stat
 from apps.profiles.models import Address
 from apps.payout.models import Commission
 from apps.products.models import Product
-from apps.checkout.models import CartItem, Order, OrderItem, OrderItemStatus
-from apps.checkout.serializers import CartSerializer, EditCartSerializer, OrderItemSerializer, OrderSerializer, CreateOrderItemSerializer, EditOrderItemStatusSerializer
+from apps.checkout.models import CartItem, Order, OrderItem
+from apps.checkout.serializers import CartSerializer, WriteCartSerializer, OrderItemSerializer, OrderSerializer, CreateOrderItemSerializer, OrderItemStatusSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from django.conf import settings
 import stripe
+from rest_framework import permissions
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-class EditCartViewSet(viewsets.ModelViewSet):
+class CartViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
@@ -23,34 +25,30 @@ class EditCartViewSet(viewsets.ModelViewSet):
         return CartItem.objects.filter(user=user)
     
     def get_serializer_class(self):
-        if (self.request.method == "GET"):
+        if self.request.method in permissions.SAFE_METHODS:
             return CartSerializer
-        return EditCartSerializer
+        else:
+            return WriteCartSerializer
 
-    def create(self, request):
-        user = request.user
-        serializer = EditCartSerializer(data=request.data)
-        serializer.is_valid()
-        cart_item = CartItem.objects.create(user=user,**serializer.validated_data)
-        cart_item.save()
-        return Response(CartSerializer(cart_item).data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(user=request.user)
+        return super().perform_create(serializer)
 
-    @action(detail=False, methods=['post'], permission_classes=(IsAuthenticated,))
-    def clear(self, request):
+    @action(detail=False, methods=['delete'], permission_classes=(IsAuthenticated,))
+    def clear_all(self, request):
         user = request.user
         CartItem.objects.filter(user=user).delete()
         return Response('success')
 
-class OrderViewSet(viewsets.ReadOnlyModelViewSet):
+class OrderViewSet(CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = OrderSerializer
     
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user)
-
-    @action(detail=False, methods=['post'], permission_classes=(IsAuthenticated,), url_path='create-order')
-    def create_order(self, request, *args, **kwargs):
+    
+    def create(self, request, *args, **kwargs):
         serializer = CreateOrderItemSerializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
         items = serializer.validated_data
@@ -215,30 +213,11 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, OrderItemEditPermission)
     serializer_class = OrderItemSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        return OrderItem.objects.filter(order__user=user)
-
-class OrderItemViewSetForChannel(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated, IsOrderItemForChannelOwner)
-    serializer_class = OrderItemSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        channel = Channel.objects.get(owner=user)
-        return OrderItem.objects.filter(product__channel=channel)
-
-
-class EditOrderItemStatusViewSetForChannel(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, IsOrderItemStatusForChannelOwner)
-    serializer_class = EditOrderItemStatusSerializer
-    
-    def get_queryset(self):
-        user = self.request.user
-        order_item_id = self.kwargs.get('order_item_id')
-        channel = Channel.objects.get(owner=user)
-        order_item = OrderItem.objects.filter(product__channel=channel).get(pk=order_item_id)
-        return order_item.statuses
+        channel = Channel.objects.filter(owner=self.request.user).first()
+        if not channel:
+            return OrderItem.objects.filter(order__product__channel=channel) 
+        return OrderItem.objects.none()

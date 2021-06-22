@@ -33,7 +33,7 @@ class CartSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class EditCartSerializer(serializers.ModelSerializer):
+class WriteCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ('id', 'product', 'quantity')
@@ -50,11 +50,11 @@ class OrderItemStatusSerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     product=CartProductSerializer(read_only=True)
     address=EditAddressSerializer(read_only=True)
-    statuses = OrderItemStatusSerializer(read_only=True, many=True)
+    status = ChoiceField(choices=OrderItem.STATUS_CHOICES)
     class Meta:
         model = OrderItem
-        fields = ('id', 'product', 'order', 'price', 'total_amount', 'selling_price', 'quantity', 'address', 'statuses')
-        read_only_fields = ('product', 'price', 'order', 'total_amount', 'selling_price', 'quantity', 'address', 'statuses')
+        fields = ('id', 'product', 'order', 'price', 'total_amount', 'selling_price', 'quantity', 'address', 'status')
+        read_only_fields = ('product', 'price', 'order', 'total_amount', 'selling_price', 'quantity', 'address')
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(read_only=True, many=True)
@@ -68,18 +68,3 @@ class CreateOrderItemSerializer(serializers.Serializer):
     product = serializers.IntegerField()
     quantity = serializers.IntegerField()
     address = serializers.IntegerField()
-
-class EditOrderItemStatusSerializer(serializers.ModelSerializer):
-    value = ChoiceField(choices=OrderItemStatus.STATUS_CHOICES)
-    class Meta:
-        model = OrderItemStatus
-        fields = ('id', 'date', 'value', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
-
-    def create(self, validated_data):
-        order_item_id = self.context.get('request').parser_context.get('kwargs').get('order_item_id')
-        order_item = OrderItem.objects.filter(pk=order_item_id).first()
-        print("Order status creation start")
-        obj = OrderItemStatus.objects.create(order_item=order_item,**validated_data)
-        obj.save()
-        return obj

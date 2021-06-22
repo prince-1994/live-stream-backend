@@ -1,10 +1,9 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from .models import Show
 from .serializers import IVSVideoSerializer, ShowSerializer
-from .permissions import *
+from rest_framework import permissions
 from apps.shows.constants import *
 from apps.channels.models import Channel
 from apps.shows.models import IVSVideo
