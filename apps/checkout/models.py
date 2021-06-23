@@ -1,5 +1,4 @@
 from os import read
-from typing_extensions import Required
 from apps.payout.models import Commission
 from apps.profiles.models import Address
 from django.db import models
