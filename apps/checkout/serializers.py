@@ -7,7 +7,7 @@ from apps.products.serializers import CategorySerializer
 from apps.channels.models import Channel
 from apps.products.models import Product
 from rest_framework import serializers
-from apps.checkout.models import CartItem, Order, OrderItem, OrderItemStatus
+from apps.checkout.models import CartItem, Order, OrderItem
 from apps.profiles.serializers import EditAddressSerializer
 from tslclone.serializers import ChoiceField
 
@@ -37,15 +37,6 @@ class WriteCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ('id', 'product', 'quantity')
-
-
-# order related serializer
-class OrderItemStatusSerializer(serializers.ModelSerializer):
-    value = ChoiceField(choices=OrderItemStatus.STATUS_CHOICES)
-    class Meta:
-        model = OrderItemStatus
-        fields = ('id', 'order_item', 'date', 'value', 'created_at', 'updated_at')
-        read_only_fields = ('order_item', 'date', 'value', 'created_at', 'updated_at')
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product=CartProductSerializer(read_only=True)

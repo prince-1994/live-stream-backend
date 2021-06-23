@@ -1,12 +1,12 @@
 from django.http import request
 from rest_framework.mixins import CreateModelMixin
-from apps.checkout.permissions import OrderItemEditPermission, OrderItemStatusEditPermission
+from apps.checkout.permissions import OrderItemEditPermission
 from apps.channels.models import Channel
 from apps.profiles.models import Address
 from apps.payout.models import Commission
 from apps.products.models import Product
 from apps.checkout.models import CartItem, Order, OrderItem
-from apps.checkout.serializers import CartSerializer, WriteCartSerializer, OrderItemSerializer, OrderSerializer, CreateOrderItemSerializer, OrderItemStatusSerializer
+from apps.checkout.serializers import CartSerializer, WriteCartSerializer, OrderItemSerializer, OrderSerializer, CreateOrderItemSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.response import Response

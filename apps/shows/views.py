@@ -12,12 +12,12 @@ from django.http.response import Http404
 from apps.products.models import Product
 from apps.shows.serializers import WriteShowSerializer
 from tslclone.permissions import ReadOnly
-from apps.shows.views import VideoEditPermission, ShowEditPermission
+from apps.shows.permissions import VideoEditPermission, ShowEditPermission
 from rest_framework.exceptions import PermissionDenied
 
 class VideoViewSet(viewsets.ModelViewSet):
     serializer_class = IVSVideoSerializer
-    permission_classes = (ReadOnly, VideoEditPermission)
+    permission_classes = (VideoEditPermission,)
     filterset_fields = {
         'show' : ['exact', 'isnull']
     }
