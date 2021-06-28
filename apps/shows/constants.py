@@ -4,3 +4,10 @@ IVS_RECORDING_END_EVENT = "Recording End"
 IVS_RECORDING_START_FAILURE_EVENT = "Recording Start Failure"
 IVS_RECORDING_END_FAILURE_EVENT = "Recording End Failure"
 IVS_RECORDING_STATUS = "recording_status"
+
+IVS_STREAM_STATE_CHANGE_EVENT_TYPE = "IVS Stream State Change"
+IVS_STREAM_START_EVENT = "Stream Start"
+IVS_STREAM_END_EVENT = "Stream End"
+IVS_STREAM_EVENT_NAME = "event_name"
+
+SHOW_TIME_DELTA = 10

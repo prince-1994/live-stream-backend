@@ -19,7 +19,7 @@ from django.urls import path
 from django.urls.conf import include
 from apps.channels.views import ChannelViewSet
 from apps.products.views import CategoryViewSet, ProductViewSet
-from apps.shows.views import ShowViewSet, VideoViewSet
+from apps.shows.views import ShowViewSet, StreamViewSet
 from apps.profiles.views import AddressViewset
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
@@ -34,7 +34,7 @@ router.register(r'cart', CartViewSet, basename='cart')
 router.register(r'addresses', AddressViewset, basename='address')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'order-items', OrderItemViewSet, basename='order-item')
-router.register(r'videos', VideoViewSet, basename="video")
+router.register(r'streams', StreamViewSet, basename="stream")
 
 urlpatterns = []
 urlpatterns += router.urls

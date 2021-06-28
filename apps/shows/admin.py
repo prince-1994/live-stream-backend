@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.shows.models import Show, IVSVideo
+from apps.shows.models import Show, IVSStream
 
 admin.site.register(Show)
-admin.site.register(IVSVideo)
+admin.site.register(IVSStream)
