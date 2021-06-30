@@ -16,15 +16,6 @@ from rest_framework.exceptions import PermissionDenied
 import dateutil.parser
 from datetime import timedelta
 
-
-RECORDING_STATUS_MAPPING = {
-    IVS_RECORDING_START_EVENT: "S",
-    IVS_RECORDING_END_EVENT: "E",
-    IVS_RECORDING_START_FAILURE_EVENT: "SF",
-    IVS_RECORDING_END_FAILURE_EVENT: "EF",
-}
-
-
 def get_stream(channel, aws_stream_id, create=False):
     stream = channel.streams.filter(aws_stream_id=aws_stream_id).first()
     if create and (not stream):
@@ -42,14 +33,13 @@ def save_recording_data(stream, data, status):
 
 def get_ivs_stream_event_handler(event, event_type):
     if event_type == IVS_RECORDING_STATE_CHANGE_EVENT_TYPE:
-        status = RECORDING_STATUS_MAPPING.get(event)
 
         def recording_event_handler(channel, data, time):
             if not status:
                 raise Exception("Event not supported")
             aws_stream_id = data.get("stream_id")
             stream = get_stream(channel, aws_stream_id, create=True)
-            save_recording_data(stream, data, status)
+            save_recording_data(stream, data, event)
 
         return recording_event_handler
 
@@ -74,7 +64,7 @@ def get_ivs_stream_event_handler(event, event_type):
                     stream.show = show
             elif event == IVS_STREAM_END_EVENT:
                 stream.is_live = False
-                stream.start_time = time
+                stream.end_time = time
             else:
                 raise Exception("Event not supported")
             stream.save()

@@ -9,7 +9,7 @@ from apps.products.models import Product
 from rest_framework import serializers
 from apps.checkout.models import CartItem, Order, OrderItem
 from apps.profiles.serializers import EditAddressSerializer
-from tslclone.serializers import ChoiceField
+from core.serializers import ChoiceField
 
 
 # cart related serializers

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
     'taggit',
     'taggit_serializer',
+    'imagekit',
 
     # local
     "apps.users.apps.UsersConfig",
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     "apps.profiles.apps.ProfilesConfig",
     "apps.payout.apps.PayoutConfig",
     "apps.applications.apps.ApplicationsConfig",
+    "apps.images.apps.ImagesConfig"
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -219,3 +221,5 @@ STRIPE_ORDERS_ENDPOINT_SECRET=os.environ.get('STRIPE_ORDERS_ENDPOINT_SECRET')
 ENV=os.environ.get('ENV')
 
 TAGGIT_CASE_INSENSITIVE = True
+
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = 'imagekit.cachefiles.strategies.Optimistic'

@@ -1,10 +1,7 @@
-from rest_framework.fields import ChoiceField
+from core.serializers import ChoiceField
 from apps.channels.serializers import ChannelSerializer
-from django.http.response import Http404
-from apps.products.models import Product
 from rest_framework import serializers
 from .models import IVSStream, Show
-from apps.channels.models import Channel
 from django.conf import settings
 
 class IVSStreamSerializer(serializers.ModelSerializer):

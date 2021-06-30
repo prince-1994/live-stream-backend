@@ -33,6 +33,8 @@ AWS_LOCATION = 'media'
 
 DEFAULT_FILE_STORAGE = 'tslclone.storages.MediaStore'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
 sentry_sdk.init(

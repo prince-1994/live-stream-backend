@@ -1,3 +1,4 @@
+from apps.shows.constants import IVS_RECORDING_END_EVENT, IVS_RECORDING_END_FAILURE_EVENT, IVS_RECORDING_START_EVENT, IVS_RECORDING_START_FAILURE_EVENT
 from botocore import model
 from django.db import models
 from apps.channels.models import Channel
@@ -18,10 +19,10 @@ class Show(models.Model):
 
 class IVSStream(models.Model):
     RECORDING_STATUS_CHOICES=[
-        ('S', 'Started'),
-        ('E', 'Ended'),
-        ('SF', 'Start Failed'),
-        ('EF', 'End Failed')
+        ('S', IVS_RECORDING_START_EVENT),
+        ('E', IVS_RECORDING_END_EVENT),
+        ('SF', IVS_RECORDING_START_FAILURE_EVENT),
+        ('EF', IVS_RECORDING_END_FAILURE_EVENT)
     ]
     aws_stream_id = models.CharField(max_length=100)
     is_live = models.BooleanField(default=None, null=True, blank=True)
