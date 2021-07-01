@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
     'taggit',
     'taggit_serializer',
+    'imagekit',
 
     # local
     "apps.users.apps.UsersConfig",
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     "apps.profiles.apps.ProfilesConfig",
     "apps.payout.apps.PayoutConfig",
     "apps.applications.apps.ApplicationsConfig",
+    "apps.images.apps.ImagesConfig"
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -96,6 +98,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
@@ -105,6 +108,9 @@ REST_FRAMEWORK = {
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': os.environ.get('DJANGO_PASSWORD_RESET_URL'),
     'ACTIVATION_URL': os.environ.get('DJANGO_ACTIVATION_URL'),
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'LOGOUT_ON_PASSWORD_CHANGE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE' : True,
     'SEND_ACTIVATION_EMAIL': True,
     "SEND_CONFIRMATION_EMAIL": True,
     'SERIALIZERS': {
@@ -215,3 +221,5 @@ STRIPE_ORDERS_ENDPOINT_SECRET=os.environ.get('STRIPE_ORDERS_ENDPOINT_SECRET')
 ENV=os.environ.get('ENV')
 
 TAGGIT_CASE_INSENSITIVE = True
+
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = 'imagekit.cachefiles.strategies.Optimistic'

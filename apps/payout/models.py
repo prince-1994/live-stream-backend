@@ -13,4 +13,4 @@ class Commission(models.Model):
 
     def __str__(self) -> str:
         # return f"{self.channel.name} - {self.category.name} : {self.percent_per_item}% + {self.fixed_per_item}" 
-        return f"{self.channel.name} : {self.percent_per_item}% + {self.fixed_per_item}" 
+        return f"{self.channel.name} : {self.percent_per_item}% + {self.fixed_per_item} - {self.is_active}" 
