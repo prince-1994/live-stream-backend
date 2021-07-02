@@ -52,7 +52,8 @@ def get_ivs_stream_event_handler(event, event_type):
             aws_stream_id = data.get("stream_id")
             stream = get_stream(channel, aws_stream_id, create=True)
             if event == IVS_STREAM_START_EVENT:
-                stream.is_live = True
+                if stream.is_live == None:
+                    stream.is_live = True
                 stream.start_time = time
                 time_delta = timedelta(minutes=SHOW_TIME_DELTA)
                 show = channel.shows.filter(
