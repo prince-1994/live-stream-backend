@@ -50,11 +50,7 @@ def get_ivs_stream_event_handler(event, event_type):
 
         def stream_change_event_handler(channel, data, time):
             aws_stream_id = data.get("stream_id")
-            stream = channel.streams.filter(aws_stream_id=aws_stream_id).first()
-            if not stream:
-                stream = IVSStream.objects.create(
-                    channel=channel, aws_stream_id=aws_stream_id
-                )
+            stream = get_stream(channel, aws_stream_id, create=True)
             if event == IVS_STREAM_START_EVENT:
                 stream.is_live = True
                 stream.start_time = time
@@ -62,6 +58,7 @@ def get_ivs_stream_event_handler(event, event_type):
                 show = channel.shows.filter(
                     time__gte=time - time_delta,
                     time__lte=time + time_delta,
+                    stream=None,
                 ).first()
                 if show:
                     stream.show = show
@@ -135,6 +132,7 @@ class ShowViewSet(viewsets.ModelViewSet):
         "stream__is_live": ["exact"],
         "time": ["gte", "lte"],
     }
+    ordering_fields = ['-time']
 
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
