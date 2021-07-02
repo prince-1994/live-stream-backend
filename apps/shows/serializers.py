@@ -9,8 +9,8 @@ class IVSStreamSerializer(serializers.ModelSerializer):
     recording_status = ChoiceField(choices=IVSStream.RECORDING_STATUS_CHOICES)
     class Meta:
         model = IVSStream
-        fields = ('id', 'aws_stream_id', 'recording_duration', 'recording_status', 'show', 'channel', 's3_path', 's3_bucket', 'cdn')
-        read_only_fields = ('aws_stream_id', 'recording_duration', 'recording_status', 'channel', 's3_path', 's3_bucket', 'cdn')
+        fields = ('id', 'aws_stream_id', 'recording_duration', 'recording_status', 'show', 'channel', 's3_path', 's3_bucket', 'cdn', 'is_live')
+        read_only_fields = ('aws_stream_id', 'recording_duration', 'recording_status', 'channel', 's3_path', 's3_bucket', 'cdn', 'is_live')
 
 class ShowSerializer(serializers.ModelSerializer):
     channel = ChannelSerializer(read_only=True)

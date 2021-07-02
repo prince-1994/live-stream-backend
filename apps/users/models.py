@@ -14,6 +14,7 @@ class User(AbstractUser):
     profile_pic = models.ImageField(default=None, null=True, blank=True)
     stripe_customer = models.CharField(max_length=100, null = True, blank=True)
     stripe_connected_account = models.CharField(max_length=100, null=True, blank=True)
+    seller_activated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

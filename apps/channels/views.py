@@ -22,6 +22,8 @@ class ChannelViewSet(viewsets.ModelViewSet):
     queryset = Channel.objects.all()
 
     def perform_create(self, serializer):
+        if not self.request.user.seller_activated:
+            raise PermissionDenied("You do not have permissions to create channel")
         channel_count = Channel.objects.filter(owner=self.request.user).count()
         if channel_count > 0:
             raise PermissionDenied("Channel already exists")

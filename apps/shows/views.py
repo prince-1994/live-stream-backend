@@ -24,7 +24,10 @@ def get_stream(channel, aws_stream_id, create=False):
 
 
 def save_recording_data(stream, data, status):
-    stream.recording_status = status
+    for item in IVSStream.RECORDING_STATUS_CHOICES:
+        if item[1] == status:
+            stream.recording_status = item[0]
+            break
     stream.s3_path = data.get("recording_s3_key_prefix")
     stream.s3_bucket = data.get("recording_s3_bucket_name")
     stream.recording_duration = data.get("recording_duration_ms")
