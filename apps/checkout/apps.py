@@ -3,5 +3,5 @@ from django.apps import AppConfig
 
 class CheckoutConfig(AppConfig):
     name = 'apps.checkout'
-    label = 'TslCloneCheckout'
+    label = 'ShopbigCheckout'
     verbose_name = 'Checkout'

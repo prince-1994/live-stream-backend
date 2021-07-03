@@ -7,10 +7,8 @@ from rest_framework import permissions
 from apps.shows.constants import *
 from apps.channels.models import Channel
 import json
-from django.http.response import Http404
-from apps.products.models import Product
 from apps.shows.serializers import WriteShowSerializer
-from tslclone.permissions import ReadOnly
+from shopbig.permissions import ReadOnly
 from apps.shows.permissions import VideoEditPermission, ShowEditPermission
 from rest_framework.exceptions import PermissionDenied
 import dateutil.parser
@@ -141,19 +139,3 @@ class ShowViewSet(viewsets.ModelViewSet):
         else:
             return WriteShowSerializer
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        channel = Channel.objects.filter(owner=user).first()
-        if not channel:
-            raise PermissionDenied("channel does not exist")
-        product_ids = set(
-            product.id for product in Product.objects.filter(channel=channel)
-        )
-        add_products = serializer.validated_data.pop("products")
-        for product in add_products:
-            if product.id not in product_ids:
-                raise Http404("Product not found")
-        obj = serializer.save(channel=channel)
-        for product in add_products:
-            obj.products.add(product)
-        return super().perform_create(serializer)

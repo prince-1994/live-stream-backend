@@ -10,7 +10,7 @@ from .permissions import *
 import boto3
 from django.conf import settings
 from apps.payout.models import Commission
-from tslclone.permissions import ReadOnly
+from shopbig.permissions import ReadOnly
 from apps.channels.permissions import ChannelEditPermission
 from rest_framework.decorators import action
 

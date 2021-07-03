@@ -31,7 +31,7 @@ AWS_S3_OBJECT_PARAMETERS = {'CacheControl' : 'max-age=86400'}
 AWS_DEFAULT_ACL = 'public-read'
 AWS_LOCATION = 'media'
 
-DEFAULT_FILE_STORAGE = 'tslclone.storages.MediaStore'
+DEFAULT_FILE_STORAGE = 'shopbig.storages.MediaStore'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 

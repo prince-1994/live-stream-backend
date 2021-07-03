@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-from channels.apps import ChannelsConfig
 import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,9 +51,7 @@ INSTALLED_APPS = [
     "apps.images.apps.ImagesConfig"
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-]
+CORS_ALLOWED_ORIGINS = []
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -67,7 +64,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tslclone.urls'
+ROOT_URLCONF = 'shopbig.urls'
 
 TEMPLATES = [
     {
@@ -85,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tslclone.wsgi.application'
+WSGI_APPLICATION = 'shopbig.wsgi.application'
 
 # Rest Framework
 # https://www.django-rest-framework.org/
@@ -189,7 +186,7 @@ MEDIA_URL = "/media/"
 
 MEDIA_ROOT = ".media/"
 
-AUTH_USER_MODEL = 'TslCloneUsers.User'
+AUTH_USER_MODEL = 'ShopbigUsers.User'
 
 DOMAIN = os.environ.get('VUE_FRONTEND_HOST')
 SITE_NAME = os.environ.get('DJANGO_SITE_NAME')
@@ -212,7 +209,7 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL')
 
-ASGI_APPLICATION = 'tslclone.asgi.application'
+ASGI_APPLICATION = 'shopbig.asgi.application'
 
 
 STRIPE_PUBLISHABLE_KEY=os.environ.get('STRIPE_PUBLISHABLE_KEY')

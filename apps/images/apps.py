@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 class ImagesConfig(AppConfig):
     name = 'apps.images'
-    label = 'TslCloneImages'
+    label = 'ShopbigImages'
     verbose_name = 'Images'

@@ -1,5 +1,5 @@
 """
-ASGI config for tslclone project.
+ASGI config for shopbig project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

@@ -1,5 +1,5 @@
 
-from tslclone.permissions import ReadOnly
+from shopbig.permissions import ReadOnly
 from rest_framework import request, viewsets, status
 from .models import Product
 from .serializers import *

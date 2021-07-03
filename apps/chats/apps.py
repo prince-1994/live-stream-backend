@@ -3,5 +3,5 @@ from django.apps import AppConfig
 
 class ChatsConfig(AppConfig):
     name = 'apps.chats'
-    label = 'TslCloneChats'
+    label = 'ShopbigChats'
     verbose_name = 'Chats'

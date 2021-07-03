@@ -3,5 +3,5 @@ from django.apps import AppConfig
 
 class ApplicationsConfig(AppConfig):
     name = 'apps.applications'
-    label = 'TslCloneApplications'
+    label = 'ShopbigApplications'
     verbose_name = 'Applications'
