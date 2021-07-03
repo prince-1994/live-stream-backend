@@ -1,3 +1,4 @@
+from django.db.models.expressions import Value
 from apps.channels.models import Channel
 from rest_framework import serializers
 from .models import Category, Product, ProductImage
@@ -17,7 +18,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
     base = Base64ImageField()
     class Meta:
         model = ProductImage
-        fields = ('id', 'base', 'image_96x96', 'image_128x128', 'image_512x512')
+        fields = ('id', 'base', 'image_96x96', 'image_128x128', 'image_512x512', 'default')
         extra_kwargs = {
             'base': {'write_only' : True}
         }
@@ -25,10 +26,9 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
     tags = TagListSerializerField()
     images = ProductImageSerializer(many=True)
-    primary_image = Base64ImageField()
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'price', 'primary_image', 'category', 'selling_price', 'tags', 'images')
+        fields = ('id', 'name', 'description', 'channel', 'price', 'category', 'selling_price', 'tags', 'images')
         read_only_fields = ('channel',)
 
     def create(self, validated_data):
@@ -52,7 +52,8 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
         channel = Channel.objects.filter(owner=user).first()
         if not channel:
             raise PermissionDenied("channel does not exist")
-        delete_image_ids = dict(request.query_params).get('delete_images')
+        query_params_dict = dict(request.query_params)
+        delete_image_ids = query_params_dict.get('delete_images')
         if delete_image_ids:
             print(dict(request.query_params))
             for delete_image_id in delete_image_ids:
@@ -61,7 +62,6 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
                     productImage = ProductImage.objects.filter(pk=id).first()
                     if productImage and productImage.product.channel == channel:
                         productImage.delete()
-                        print(productImage)
                 except ValueError as e:
                     print(e)
         if ('images' in validated_data):
@@ -69,6 +69,19 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
             for image_data in images_data:
                 image = ProductImage.objects.create(product=instance, **image_data)
                 image.save()
-        
         product = super(ProductSerializer, self).update(instance, validated_data)
+        try:
+            default_id = int(request.query_params.get('default_image'))
+        except Exception:
+            default_id = None
+        if default_id:
+            for image in ProductImage.objects.filter(product=product):
+                print(image.id, default_id, image.id == default_id)
+                if image.default and image.id != default_id:
+                    image.default = False
+                    image.save()
+                elif (not image.default) and image.id == default_id:
+                    print(image)
+                    image.default = True
+                    image.save()
         return product
