@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "apps.checkout.apps.CheckoutConfig",
     "apps.profiles.apps.ProfilesConfig",
     "apps.payout.apps.PayoutConfig",
-    "apps.applications.apps.ApplicationsConfig",
     "apps.images.apps.ImagesConfig"
 ]
 
