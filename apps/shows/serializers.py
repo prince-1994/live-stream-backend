@@ -1,5 +1,4 @@
 from apps.products.models import Product
-from django.db.models import fields
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.exceptions import PermissionDenied
 from core.serializers import ChoiceField

@@ -8,7 +8,7 @@ from apps.shows.constants import *
 from apps.channels.models import Channel
 import json
 from apps.shows.serializers import WriteShowSerializer
-from shopbig.permissions import ReadOnly
+from core.permissions import ReadOnly
 from apps.shows.permissions import VideoEditPermission, ShowEditPermission
 from rest_framework.exceptions import PermissionDenied
 import dateutil.parser

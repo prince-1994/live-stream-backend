@@ -2,21 +2,20 @@ from django.http.response import Http404
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import viewsets,status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from .models import Channel
 from .serializers import ChannelSerializer
 from .permissions import *
 import boto3
 from django.conf import settings
 from apps.payout.models import Commission
-from shopbig.permissions import ReadOnly
+from core.permissions import ReadOnly
 from apps.channels.permissions import ChannelEditPermission
 from rest_framework.decorators import action
 
 class ChannelViewSet(viewsets.ModelViewSet):
     serializer_class = ChannelSerializer
-    permission_classes = (ReadOnly|ChannelEditPermission,)
+    permission_classes = (ReadOnly | ChannelEditPermission,)
     search_fields = ['name', 'description']
     filterset_fields= ['owner']
     queryset = Channel.objects.all()

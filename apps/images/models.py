@@ -1,19 +1,16 @@
+from apps.users.models import User
 from django.db import models
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFit
 
-class Image16x16Mixin(models.Model):
-    image_64x64= ImageSpecField(source='base', processors=[ResizeToFit(16, 16)], format='PNG', options={'quality': 70})
-    class Meta:
-        abstract = True
+options = {'quality': 70}
+format='PNG'
+processors=[ResizeToFit(32, 32)]
 
-class Image24x24Mixin(models.Model):
-    image_64x64= ImageSpecField(source='base', processors=[ResizeToFit(24, 24)], format='PNG', options={'quality': 70})
-    class Meta:
-        abstract = True
+# class Custorm
 
 class Image32x32Mixin(models.Model):
-    image_64x64= ImageSpecField(source='base', processors=[ResizeToFit(32, 32)], format='PNG', options={'quality': 70})
+    image_64x64= ImageSpecField(source='base', processors=[ResizeToFit(32, 32)], format='PNG', options=options)
     class Meta:
         abstract = True
 
@@ -52,3 +49,15 @@ class Image720x1280Mixin(models.Model):
     image_320x180 = ImageSpecField(source='base', processors=[ResizeToFit(720, 1280)], format='PNG', options={'quality': 70})
     class Meta:
         abstract = True
+
+class ImageAlbum(models.Model):
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, related_name="images", on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return self.name
+
+class Image(models.Model):
+    base = models.ImageField()
+    album = models.ForeignKey(ImageAlbum, related_name="images", on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
