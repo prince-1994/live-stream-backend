@@ -1,15 +1,15 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from imagekit.cachefiles import ImageCacheFile
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from apps.images.models import Image, ImageAlbum
 from apps.images.specs import Thumbnail
 
 class ImageSpecField(serializers.ImageField):
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.specs = kwargs.pop('specs', {})
         self.base = kwargs.pop('base', False)
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
     def to_representation(self, original_image):
         if not original_image:
@@ -21,6 +21,7 @@ class ImageSpecField(serializers.ImageField):
             cached = ImageCacheFile(spec(original_image))
             cached.generate()
             result[field_name] = super().to_representation(cached)
+            print(cached)
 
         if self.base:
             result['base'] = super().to_representation(original_image)
@@ -28,25 +29,23 @@ class ImageSpecField(serializers.ImageField):
         return result
 
 class ImageSerializer(serializers.ModelSerializer):
-    image_100x50 = ImageSpecField(specs={
-        'small' : Thumbnail
-    }, source='base')
     base = Base64ImageField()
     class Meta:
         model = Image
-        fields = ('id', 'base')
+        fields = ('id', 'base', 'default')
 
 class ImageAlbumSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True)
     class Meta:
         model = ImageAlbum
         fields = ('id', 'name', 'owner', 'images')
-        read_only = ('id', 'name', 'owner')
+        read_only_fields = ('id', 'owner')
 
     def create(self, validated_data):
         request = self.context['request']
         user = request.user
         images_data = validated_data.pop('images')
+        print(validated_data)
         imageAlbum = ImageAlbum.objects.create(owner=user, **validated_data)
         imageAlbum.save()
         for image_data in images_data:
@@ -79,6 +78,7 @@ class ImageAlbumSerializer(serializers.ModelSerializer):
         imageAlbum = super(ImageAlbumSerializer, self).update(instance, validated_data)
         try:
             default_id = int(request.query_params.get('default_image'))
+            print(default_id)
         except Exception:
             default_id = None
         if default_id:

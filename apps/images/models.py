@@ -61,3 +61,4 @@ class Image(models.Model):
     base = models.ImageField()
     album = models.ForeignKey(ImageAlbum, related_name="images", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
+    default = models.BooleanField(null=True, default=None, blank=True)
