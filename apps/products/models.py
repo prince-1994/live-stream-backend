@@ -1,9 +1,7 @@
-from apps.images.models import Image128x128Mixin, Image512x512Mixin, Image96x96Mixin
 from django.db import models
 from apps.channels.models import Channel
 from taggit.managers import TaggableManager
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFit
+from apps.images.models import ImageAlbum
 
 class  Category(models.Model):
     name = models.CharField(unique=True, max_length=150)
@@ -25,12 +23,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True) 
     tags = TaggableManager(blank=True)
+    image_album = models.OneToOneField(ImageAlbum, related_name='product', on_delete=models.CASCADE, default=None, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
-
-class ProductImage(Image96x96Mixin, Image128x128Mixin, Image512x512Mixin):
-    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE, null=True, default=True)
-    base = models.ImageField()
-    default = models.BooleanField(null=True, default=None, blank=True)
     

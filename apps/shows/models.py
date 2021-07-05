@@ -1,19 +1,14 @@
-from apps.images.models import Image180x320Mixin, Image720x1280Mixin
+from apps.images.models import ImageAlbum
 from apps.shows.constants import IVS_RECORDING_END_EVENT, IVS_RECORDING_END_FAILURE_EVENT, IVS_RECORDING_START_EVENT, IVS_RECORDING_START_FAILURE_EVENT
-from botocore import model
 from django.db import models
 from apps.channels.models import Channel
 from apps.products.models import Product
-
-class ShowImage(Image720x1280Mixin, Image180x320Mixin):
-    base = models.ImageField(default=None)
-
 
 class Show(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     channel = models.ForeignKey(Channel, related_name="shows", on_delete=models.CASCADE)
-    display_pic = models.OneToOneField(ShowImage, on_delete=models.CASCADE)
+    display_pic_album = models.OneToOneField(ImageAlbum, related_name='show', on_delete=models.CASCADE, default=None, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     time = models.DateTimeField()

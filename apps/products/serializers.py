@@ -1,34 +1,37 @@
+from apps.images.specs import Image128x128, Image256x256, Image512x512, Image64x64
+from apps.images.serializers import ImageSerializer, ImageSpecField
+from apps.images.models import ImageAlbum
 from django.db.models.expressions import Value
 from apps.channels.models import Channel
 from rest_framework import serializers
-from .models import Category, Product, ProductImage
+from .models import Category, Product
 from taggit_serializer.serializers import (TaggitSerializer, TagListSerializerField)
 from rest_framework.exceptions import PermissionDenied
 from drf_extra_fields.fields import Base64ImageField
+
+class ProductImageSerializer(ImageSerializer):
+    base = ImageSpecField(specs={
+        'image_64x64' : Image64x64,
+        'image_128x128' : Image128x128,
+        'image_256x256' : Image256x256,
+        'image_512x512' : Image512x512,
+    }, base=True)
+
+class ProductImageAlbumSerializer(ImageAlbum):
+    images = ProductImageSerializer(many=True, read_only=True)
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name')
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    image_96x96 = serializers.ImageField(read_only=True)
-    image_128x128 = serializers.ImageField(read_only=True)
-    image_512x512 = serializers.ImageField(read_only=True)
-    base = Base64ImageField()
-    class Meta:
-        model = ProductImage
-        fields = ('id', 'base', 'image_96x96', 'image_128x128', 'image_512x512', 'default')
-        extra_kwargs = {
-            'base': {'write_only' : True}
-        }
-
 class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
     tags = TagListSerializerField()
-    images = ProductImageSerializer(many=True)
+    image_album = ProductImageAlbumSerializer()
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'price', 'category', 'selling_price', 'tags', 'images')
+        fields = ('id', 'name', 'description', 'channel', 'price', 'category', 'selling_price', 'tags', 'image_album')
         read_only_fields = ('channel',)
 
     def create(self, validated_data):
@@ -36,52 +39,9 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
         channel = Channel.objects.filter(owner=user).first()
         if not channel:
             raise PermissionDenied("channel does not exist")
-        images_data = validated_data.pop('images')
         product = Product.objects.create(channel=channel, **validated_data)
+        image_album = ImageAlbum.objects.create(path=f"products/{product.id}/images/")
+        product.image_album = image_album
         product.save()
-        for image_data in images_data:
-            image = ProductImage.objects.create(product=product, **image_data)
-            image.save()
-        return product
-
-
-
-    def update(self, instance, validated_data):
-        request = self.context['request']
-        user = request.user
-        channel = Channel.objects.filter(owner=user).first()
-        if not channel:
-            raise PermissionDenied("channel does not exist")
-        query_params_dict = dict(request.query_params)
-        delete_image_ids = query_params_dict.get('delete_images')
-        if delete_image_ids:
-            print(dict(request.query_params))
-            for delete_image_id in delete_image_ids:
-                try:
-                    id = int(delete_image_id)
-                    productImage = ProductImage.objects.filter(pk=id).first()
-                    if productImage and productImage.product.channel == channel:
-                        productImage.delete()
-                except ValueError as e:
-                    print(e)
-        if ('images' in validated_data):
-            images_data = validated_data.pop('images')
-            for image_data in images_data:
-                image = ProductImage.objects.create(product=instance, **image_data)
-                image.save()
-        product = super(ProductSerializer, self).update(instance, validated_data)
-        try:
-            default_id = int(request.query_params.get('default_image'))
-        except Exception:
-            default_id = None
-        if default_id:
-            for image in ProductImage.objects.filter(product=product):
-                print(image.id, default_id, image.id == default_id)
-                if image.default and image.id != default_id:
-                    image.default = False
-                    image.save()
-                elif (not image.default) and image.id == default_id:
-                    print(image)
-                    image.default = True
-                    image.save()
+        product.save()
         return product

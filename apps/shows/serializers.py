@@ -1,13 +1,24 @@
+from apps.images.specs import Image1600x900, Image320x180
+from apps.images.serializers import ImageSerializer, ImageSpecField
+from apps.images.models import ImageAlbum
 from apps.products.models import Product
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework.exceptions import PermissionDenied
 from core.serializers import ChoiceField
 from apps.channels.serializers import ChannelSerializer
 from rest_framework import serializers
-from .models import IVSStream, Show, ShowImage
+from .models import IVSStream, Show
 from django.conf import settings
 from apps.channels.models import Channel
 from django.http.response import Http404
+
+class ShowDisplayPicImageSerializer(ImageSerializer):
+    base = ImageSpecField(specs={
+        'image_1600x900' : Image1600x900,
+        'image_320x180' : Image320x180,
+    }, base=True)
+
+class ShowDisplayPicAlbumSerializer(ImageAlbum):
+    images = ShowDisplayPicImageSerializer(many=True, read_only=True)
 
 class IVSStreamSerializer(serializers.ModelSerializer):
     cdn = serializers.ReadOnlyField(default=settings.AWS_IVS_VIDEO_CDN)
@@ -17,29 +28,21 @@ class IVSStreamSerializer(serializers.ModelSerializer):
         fields = ('id', 'aws_stream_id', 'recording_duration', 'recording_status', 'show', 'channel', 's3_path', 's3_bucket', 'cdn', 'is_live')
         read_only_fields = ('aws_stream_id', 'recording_duration', 'recording_status', 'channel', 's3_path', 's3_bucket', 'cdn', 'is_live')
 
-class ShowImageSerilizer(serializers.ModelSerializer):
-    base = Base64ImageField()
-    image_720x1280 = serializers.ImageField()
-    image_180x320 = serializers.ImageField()
-    class Meta:
-        model = ShowImage
-        fields = ('id', 'base', 'image_720x1280', 'image_180x320')
-
 
 class ShowSerializer(serializers.ModelSerializer):
     channel = ChannelSerializer(read_only=True)
     stream = IVSStreamSerializer(read_only=True)
-    display_pic = ShowImageSerilizer(read_only=True)
+    display_pic_album = ShowDisplayPicAlbumSerializer()
     class Meta:
         model = Show
-        fields = ('id', 'name', 'description', 'channel', 'display_pic', 'products', 'time', 'stream')
-        read_only_fields = ('channel',)
+        fields = ('id', 'name', 'description', 'channel', 'display_pic_album', 'products', 'time', 'stream')
+        read_only_fields = ('channel', 'display_pic_album',)
         depth = 1
 
 class WriteShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Show
-        fields = ('id', 'name', 'description', 'channel', 'display_pic', 'products', 'time', 'stream')
+        fields = ('id', 'name', 'description', 'channel', 'products', 'time', 'stream')
         read_only_fields = ('channel',)
 
     def create(self, validated_data):
@@ -55,6 +58,9 @@ class WriteShowSerializer(serializers.ModelSerializer):
             if product.id not in product_ids:
                 raise Http404("Product not found")
         obj = Show.objects.save(channel=channel, **validated_data)
+        image_album = ImageAlbum.objects.create(path=f"shows/{obj.id}/images/")
+        obj.display_pic_album = image_album
+        obj.save()
         for product in add_products:
             obj.products.add(product)
         return super().create(validated_data)

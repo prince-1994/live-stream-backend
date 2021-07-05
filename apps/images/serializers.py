@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from imagekit.cachefiles import ImageCacheFile
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from apps.images.models import Image, ImageAlbum
-from apps.images.specs import Thumbnail
+
 
 class ImageSpecField(serializers.ImageField):
     def __init__(self, *args, **kwargs):
@@ -32,14 +32,14 @@ class ImageSerializer(serializers.ModelSerializer):
     base = Base64ImageField()
     class Meta:
         model = Image
-        fields = ('id', 'base', 'default')
+        fields = ('id', 'base', 'name', 'default')
 
 class ImageAlbumSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True)
     class Meta:
         model = ImageAlbum
-        fields = ('id', 'name', 'owner', 'images')
-        read_only_fields = ('id', 'owner')
+        fields = ('id', 'path', 'images', 'owner')
+        read_only_fields = ('id', 'path', 'owner')
 
     def create(self, validated_data):
         request = self.context['request']

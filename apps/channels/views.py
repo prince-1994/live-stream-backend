@@ -1,3 +1,4 @@
+from apps.images.models import ImageAlbum
 from django.http.response import Http404
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -43,6 +44,11 @@ class ChannelViewSet(viewsets.ModelViewSet):
             owner=user,
             arn=response.get('channel').get('arn'),
             stream_key_arn=response.get('streamKey').get('arn'))
+        display_pic_album = ImageAlbum.objects.create(path=f"channels/{obj.id}/display_pic/")
+        background_pic_album = ImageAlbum.objects.create(path=f"channels/{obj.id}/background_pic/")
+        obj.display_pic_album = display_pic_album
+        obj.background_pic_album = background_pic_album
+        obj.save()
         commission = Commission.objects.create(channel=obj)
         commission.save()
         return super().perform_create(serializer)
