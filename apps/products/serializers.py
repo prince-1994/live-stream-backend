@@ -1,5 +1,5 @@
 from apps.images.specs import Image128x128, Image256x256, Image512x512, Image64x64
-from apps.images.serializers import ImageSerializer, ImageSpecField
+from apps.images.serializers import ImageAlbumSerializer, ImageSerializer, ImageSpecField
 from apps.images.models import ImageAlbum
 from django.db.models.expressions import Value
 from apps.channels.models import Channel
@@ -17,7 +17,7 @@ class ProductImageSerializer(ImageSerializer):
         'image_512x512' : Image512x512,
     }, base=True)
 
-class ProductImageAlbumSerializer(ImageAlbum):
+class ProductImageAlbumSerializer(ImageAlbumSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
 
 
@@ -28,11 +28,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
     tags = TagListSerializerField()
-    image_album = ProductImageAlbumSerializer()
+    image_album = ProductImageAlbumSerializer(read_only=True)
     class Meta:
         model = Product
         fields = ('id', 'name', 'description', 'channel', 'price', 'category', 'selling_price', 'tags', 'image_album')
-        read_only_fields = ('channel',)
+        read_only_fields = ('channel', 'image_album')
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -40,8 +40,7 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
         if not channel:
             raise PermissionDenied("channel does not exist")
         product = Product.objects.create(channel=channel, **validated_data)
-        image_album = ImageAlbum.objects.create(path=f"products/{product.id}/images/")
+        image_album = ImageAlbum.objects.create(owner=user, path=f"products/{product.id}/images/")
         product.image_album = image_album
-        product.save()
         product.save()
         return product
