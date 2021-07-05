@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from apps.images.views import ImageAlbumViewset
+
 from apps.checkout.views import CartViewSet, OrderItemViewSet, OrderViewSet
 from django.contrib import admin
 from django.urls import path
@@ -36,7 +36,7 @@ router.register(r'addresses', AddressViewset, basename='address')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'order-items', OrderItemViewSet, basename='order-item')
 router.register(r'streams', StreamViewSet, basename='stream')
-router.register(r'image-albums', ImageAlbumViewset, basename='image-album')
+# router.register(r'image-albums', ImageAlbumViewset, basename='image-album')
 
 urlpatterns = []
 urlpatterns += router.urls

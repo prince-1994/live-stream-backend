@@ -59,7 +59,7 @@ class ShowConsumer(JsonWebsocketConsumer):
                 'message' : message.content,
                 'timestamp': str(message.timestamp),
             }
-            if author.profile_pic != None:
+            if author.profile_pic:
                 data['profile_pic'] = author.profile_pic.url
             message_data.append(data)
         # print(messages)
@@ -87,10 +87,10 @@ class ShowConsumer(JsonWebsocketConsumer):
 
 
     def disconnect(self, close_code):
-        print(self.scope)
-        async_to_sync(self.channel_layer.group_discard)(
-            self.show_ws_group_name, self.channel_name
-        )
+        if self.show_ws_group_name and self.channel_name:
+            async_to_sync(self.channel_layer.group_discard)(
+                self.show_ws_group_name, self.channel_name
+            )
 
     def receive_json(self, data):
         command_type = data.get('command')
