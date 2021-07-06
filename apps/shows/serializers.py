@@ -1,3 +1,4 @@
+from drf_extra_fields.fields import Base64ImageField
 from apps.products.serializers import ProductSerializer
 from apps.images.specs import Image1600x900, Image320x180
 from apps.images.serializers import ImageSpecField
@@ -35,6 +36,10 @@ class ShowSerializer(serializers.ModelSerializer):
         depth = 1
 
 class WriteShowSerializer(serializers.ModelSerializer):
+    display_pic = ImageSpecField(specs={
+        'image_1600x900' : Image1600x900,
+        'image_320x180' : Image320x180,
+    }, base=True)
     class Meta:
         model = Show
         fields = ('id', 'name', 'description', 'channel', 'products', 'time', 'display_pic')

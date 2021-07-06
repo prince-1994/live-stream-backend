@@ -31,12 +31,11 @@ router.register(r'channels', ChannelViewSet, basename='channel')
 router.register(r'products', ProductViewSet, basename="product")
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'shows', ShowViewSet, basename='show')
-router.register(r'cart', CartViewSet, basename='cart')
+router.register(r'cart-items', CartViewSet, basename='cart')
 router.register(r'addresses', AddressViewset, basename='address')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'order-items', OrderItemViewSet, basename='order-item')
 router.register(r'streams', StreamViewSet, basename='stream')
-# router.register(r'image-albums', ImageAlbumViewset, basename='image-album')
 
 urlpatterns = []
 urlpatterns += router.urls
