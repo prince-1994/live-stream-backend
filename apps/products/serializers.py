@@ -41,13 +41,21 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
         for product_image_data in product_images_data:
             image = product_image_data.pop('image', None)
             product_image = ProductImage.objects.create(product=product, **product_image_data)
-            product.image = image
+            product_image.image = image
             product_image.save()
         return product
 
     def update(self, instance, validated_data):
         request = self.context['request']
         user = request.user
+        channel = Channel.objects.filter(owner=user).first()
+        if not channel:
+            PermissionDenied("Channel does not exist")
+        images_data = validated_data.pop('images', [])
+        for image_data in images_data:
+            image = ProductImage.objects.create(product=instance, **image_data)
+            image.save()
+        instance = super().update(instance, validated_data)
         query_params_dict = dict(request.query_params)
         delete_image_ids = query_params_dict.get('delete_images')
         if delete_image_ids:
@@ -59,11 +67,6 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
                         image.delete()
                 except ValueError as e:
                     print(e)
-        if ('images' in validated_data):
-            images_data = validated_data.pop('images')
-            for image_data in images_data:
-                image = ProductImage.objects.create(product=instance, **image_data)
-                image.save()
         try:
             default_id = int(request.query_params.get('default_image'))
             print(default_id)
@@ -78,3 +81,4 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
                     image.default = True
                     image.save()
         return instance
+        

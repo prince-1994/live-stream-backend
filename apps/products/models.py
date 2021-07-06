@@ -27,11 +27,11 @@ class Product(models.Model):
         return self.name
 
 def base_image_name(instance, filename):
-    user_id = instance.product.channel.user.id
+    user_id = instance.product.channel.owner.id
     channel_id = instance.product.channel.id
     product_id = instance.product.id
     id = instance.id
-    return f"users/{user_id}/channels/{channel_id}/products/{product_id}/images/{id}/filename"
+    return f"users/{user_id}/channels/{channel_id}/products/{product_id}/images/{id}/{filename}"
 
 class ProductImage(models.Model):
     image = models.ImageField(upload_to=base_image_name, default=None, null=True, blank=True)
