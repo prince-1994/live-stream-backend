@@ -38,8 +38,11 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
         product_images_data = validated_data.pop('images', [])
         product = Product.objects.create(channel=channel, **validated_data)
         product.save()
-        for product_images_data in product_images_data:
-            product_image = ProductImage.objects.create(product=product, **product_image)
+        for product_image_data in product_images_data:
+            image = product_image_data.pop('image', None)
+            product_image = ProductImage.objects.create(product=product, **product_image_data)
+            product.image = image
+            product_image.save()
         return product
 
     def update(self, instance, validated_data):
@@ -61,7 +64,6 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
             for image_data in images_data:
                 image = ProductImage.objects.create(product=instance, **image_data)
                 image.save()
-        imageAlbum = super(ImageAlbumSerializer, self).update(instance, validated_data)
         try:
             default_id = int(request.query_params.get('default_image'))
             print(default_id)

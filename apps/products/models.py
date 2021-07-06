@@ -34,6 +34,6 @@ def base_image_name(instance, filename):
     return f"users/{user_id}/channels/{channel_id}/products/{product_id}/images/{id}/filename"
 
 class ProductImage(models.Model):
-    image = models.ImageField(upload_to=base_image_name)
+    image = models.ImageField(upload_to=base_image_name, default=None, null=True, blank=True)
     default = models.BooleanField(null=True, default=None, blank=True)
     product = models.ForeignKey(Product, related_name="images", on_delete=models.CASCADE)

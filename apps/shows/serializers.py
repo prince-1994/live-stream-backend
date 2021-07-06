@@ -52,10 +52,9 @@ class WriteShowSerializer(serializers.ModelSerializer):
         for product in add_products:
             if product.id not in product_ids:
                 raise Http404("Product not found")
-        print(channel, "-----------------", validated_data)
+        display_pic = validated_data.pop('display_pic', None)
         obj = Show.objects.create(channel=channel, **validated_data)
-        image_album = ImageAlbum.objects.create(owner=user, path=f"shows/{obj.id}/images/")
-        obj.display_pic_album = image_album
+        obj.display_pic = display_pic
         obj.save()
         for product in add_products:
             obj.products.add(product)

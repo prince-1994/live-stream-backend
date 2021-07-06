@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import tree
 from apps.users.models import User
 
 def display_pic_name(instance, filename):
@@ -10,7 +9,7 @@ def display_pic_name(instance, filename):
 def background_pic_name(instance, filename):
     user_id = instance.owner.id
     channel_id = instance.id
-    return f"users/{user_id}/channels/{channel_id}/display_pic/{filename}"
+    return f"users/{user_id}/channels/{channel_id}/background_pic/{filename}"
 
 class Channel(models.Model):
     name = models.CharField(max_length=100)

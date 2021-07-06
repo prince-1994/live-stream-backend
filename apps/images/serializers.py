@@ -21,7 +21,6 @@ class ImageSpecField(Base64ImageField):
             cached = ImageCacheFile(spec(original_image))
             cached.generate()
             result[field_name] = super().to_representation(cached)
-            print(cached)
 
         if self.base:
             result['base'] = super().to_representation(original_image)
