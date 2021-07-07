@@ -3,7 +3,6 @@ from apps.channels.models import Channel
 from apps.products.models import Product
 from rest_framework import serializers
 from apps.checkout.models import CartItem, Order, OrderItem
-from apps.profiles.serializers import EditAddressSerializer
 from core.serializers import ChoiceField
 
 
