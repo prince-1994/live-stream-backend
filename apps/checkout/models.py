@@ -65,6 +65,7 @@ class OrderItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=1,choices=STATUS_CHOICES, default='P')
+    
     class Meta:
         constraints = [
             models.CheckConstraint(check=models.Q(quantity__gte=1), name="order_item_quantity_gte_1")

@@ -180,7 +180,7 @@ if DJANGO_LOGGING:
         },
         'loggers': {
             'django.db.backends': {
-                'level': 'INFO',
+                'level': 'DEBUG',
             },
         },
         'root': {
