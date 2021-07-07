@@ -17,7 +17,7 @@ from rest_framework import permissions
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-class CartViewSet(viewsets.ModelViewSet):
+class CartItemViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):

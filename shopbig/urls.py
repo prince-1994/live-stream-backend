@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from apps.checkout.views import CartViewSet, OrderItemViewSet, OrderViewSet
+from apps.checkout.views import CartItemViewSet, OrderItemViewSet, OrderViewSet
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
@@ -31,7 +31,7 @@ router.register(r'channels', ChannelViewSet, basename='channel')
 router.register(r'products', ProductViewSet, basename="product")
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'shows', ShowViewSet, basename='show')
-router.register(r'cart-items', CartViewSet, basename='cart')
+router.register(r'cart-items', CartItemViewSet, basename='cart')
 router.register(r'addresses', AddressViewset, basename='address')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'order-items', OrderItemViewSet, basename='order-item')

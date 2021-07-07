@@ -1,6 +1,12 @@
 from pathlib import Path
 import os
 import logging
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+# ENV
+ENV=os.environ.get('ENV')
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,13 +18,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(':')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -81,10 +86,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'shopbig.wsgi.application'
-
 # Rest Framework
 # https://www.django-rest-framework.org/
+DJANGO_REST_PAGE_SIZE=os.environ.get("DJANGO_REST_PAGE_SIZE", 15)
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication'
@@ -98,7 +102,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': DJANGO_REST_PAGE_SIZE
 }
 
 # Djoser Framework
@@ -146,60 +150,69 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# # Logging
-# LOGGING = {
-#     'version': 1,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#         },
-#     },
-#     'root': {
-#         'handlers': ['console'],
-#     }
-# }
 
+
+# Media
 MEDIA_URL = "/media/"
-
 MEDIA_ROOT = ".media/"
 
+
+# Logging
+DJANGO_LOGGING = os.environ.get('DJANGO_LOGGING')
+if DJANGO_LOGGING:
+    LOGGING = {
+        'version': 1,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'loggers': {
+            'django.db.backends': {
+                'level': 'INFO',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+        }
+    }
+
+
+# Auth User Model
 AUTH_USER_MODEL = 'ShopbigUsers.User'
 
-DOMAIN = os.environ.get('VUE_FRONTEND_HOST')
-SITE_NAME = os.environ.get('DJANGO_SITE_NAME')
-# EMAIL_BACKEND = 'django_ses.SESBackend'
 
-# AWS_SES_ACCESS_KEY_ID = os.environ.get('AWS_SES_ACCESS_KEY_ID')
-# AWS_SES_SECRET_ACCESS_KEY = os.environ.get('AWS_SES_SECRET_ACCESS_KEY')
-# AWS_SES_REGION_NAME = os.environ.get('AWS_SES_REGION')
-# AWS_SES_REGION_ENDPOINT = os.environ.get('AWS_SES_HOST')
+# Django
+DOMAIN = os.environ.get('DJANGO_DOMAIN', 'shopbig.live')
+SITE_NAME = os.environ.get('DJANGO_SITE_NAME', 'ShopBigLive')
 
-AWS_S3_RECORDING_CONFIGURATION_ARN = os.environ.get('AWS_S3_RECORDING_CONFIGURATION_ARN')
-AWS_S3_CHANNEL_TYPE = os.environ.get('AWS_S3_CHANNEL_TYPE')
+
+# AWS IVS
+AWS_IVS_S3_RECORDING_CONFIGURATION_ARN = os.environ.get('AWS_IVS_S3_RECORDING_CONFIGURATION_ARN')
+AWS_IVS_S3_CHANNEL_TYPE = os.environ.get('AWS_IVS_S3_CHANNEL_TYPE')
 AWS_IVS_VIDEO_CDN = os.environ.get('AWS_IVS_VIDEO_CDN')
 
+
+# AWS S3
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl' : 'max-age=86400'}
+AWS_DEFAULT_ACL = 'public-read'
+AWS_LOCATION = 'media'
+AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")
+
+
+# Email
+EMAIL_BACKEND_TYPE = os.environ.get('EMAIL_BACKEND_TYPE')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
@@ -207,16 +220,81 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL')
+EMAIL_BACKEND = f"django.core.mail.backends.{EMAIL_BACKEND_TYPE}.EmailBackend"
 
-ASGI_APPLICATION = 'shopbig.asgi.application'
 
-
+# Stripe
 STRIPE_PUBLISHABLE_KEY=os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY=os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_ORDERS_ENDPOINT_SECRET=os.environ.get('STRIPE_ORDERS_ENDPOINT_SECRET')
 
-ENV=os.environ.get('ENV')
 
+# Taggit
 TAGGIT_CASE_INSENSITIVE = True
 
+
+# Imagekit
 IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = 'imagekit.cachefiles.strategies.Optimistic'
+
+
+# Databases
+DB_ENGINE_TYPE = os.environ.get('DB_ENGINE_TYPE','')
+DB_NAME = os.environ.get('DB_NAME','')
+DB_USER = os.environ.get('DB_USER','')
+DB_PASSWORD = os.environ.get('DB_PASSWORD','')
+DB_HOST = os.environ.get('DB_HOST','')
+DB_PORT = os.environ.get('DB_PORT','')
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.' + DB_ENGINE_TYPE,
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
+    }
+}
+
+# Channel layers
+DJANGO_REDIS_CHANNEL_LAYERS_HOSTS = list(map(lambda x : x.split(":"), os.environ.get("DJANGO_REDIS_CHANNEL_LAYERS_HOSTS", "").split(",")))
+if len(DJANGO_REDIS_CHANNEL_LAYERS_HOSTS):
+    CHANNEL_LAYERS = {
+        'default' : {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts' : DJANGO_REDIS_CHANNEL_LAYERS_HOSTS,
+            }
+        }
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default' : {
+            'BACKEND': "channels.layers.InMemoryChannelLayer",
+        }
+    }
+
+# Django Application
+WSGI_APPLICATION = 'shopbig.wsgi.application'
+ASGI_APPLICATION = 'shopbig.asgi.application'
+
+
+# File storage
+if not ENV in ['local']:
+    DEFAULT_FILE_STORAGE = 'shopbig.storages.MediaStore'
+    
+# SENTRY
+SENTRY_DSN = os.environ.get('SENTRY_DSN', '')
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=os.environ.get(SENTRY_DSN),
+        integrations=[DjangoIntegration()],
+
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )

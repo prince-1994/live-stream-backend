@@ -18,7 +18,7 @@ class CartProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     class Meta:
         model = Product
-        fields = ('id', 'name', 'primary_image', 'channel', 'category', 'price', 'selling_price')
+        fields = ('id', 'name', 'channel', 'category', 'price', 'selling_price')
 
 class CartSerializer(serializers.ModelSerializer):
     product=CartProductSerializer(read_only=True)
@@ -34,13 +34,12 @@ class WriteCartSerializer(serializers.ModelSerializer):
         fields = ('id', 'product', 'quantity')
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product=CartProductSerializer(read_only=True)
-    address=EditAddressSerializer(read_only=True)
     status = ChoiceField(choices=OrderItem.STATUS_CHOICES)
     class Meta:
         model = OrderItem
-        fields = ('id', 'product', 'order', 'price', 'total_amount', 'selling_price', 'quantity', 'address', 'status')
-        read_only_fields = ('product', 'price', 'order', 'total_amount', 'selling_price', 'quantity', 'address')
+        fields = ('id', 'product', 'price', 'total_amount', 'selling_price', 'quantity', 'address', 'status')
+        read_only_fields = ('product', 'price', 'total_amount', 'selling_price', 'quantity', 'address')
+        depth = 1
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(read_only=True, many=True)
