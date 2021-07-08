@@ -257,8 +257,9 @@ DATABASES = {
 }
 
 # Channel layers
-DJANGO_REDIS_CHANNEL_LAYERS_HOSTS = list(map(lambda x : x.split(":"), os.environ.get("DJANGO_REDIS_CHANNEL_LAYERS_HOSTS", "").split(",")))
-if len(DJANGO_REDIS_CHANNEL_LAYERS_HOSTS):
+DJANGO_REDIS_CHANNEL_LAYERS_HOSTS_STRING = os.environ.get("DJANGO_REDIS_CHANNEL_LAYERS_HOSTS", "")
+if DJANGO_REDIS_CHANNEL_LAYERS_HOSTS_STRING:
+    DJANGO_REDIS_CHANNEL_LAYERS_HOSTS = list(map(lambda x : x.split(":"), os.environ.get("DJANGO_REDIS_CHANNEL_LAYERS_HOSTS", "").split(",")))
     CHANNEL_LAYERS = {
         'default' : {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',

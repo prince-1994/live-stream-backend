@@ -1,11 +1,8 @@
 from apps.chats.models import Message
-import json
 from os import close, sync
 from asgiref.sync import async_to_sync
-from channels.generic.websocket import WebsocketConsumer, JsonWebsocketConsumer
-from django.contrib.auth.models import AnonymousUser
+from channels.generic.websocket import  JsonWebsocketConsumer
 from apps.shows.models import Show
-from apps.chats.serializers import SendChatMessageSerializer
 
 
 class ShowConsumer(JsonWebsocketConsumer):
@@ -75,7 +72,6 @@ class ShowConsumer(JsonWebsocketConsumer):
         self.user = self.scope['user']
         try:
             self.show = Show.objects.get(pk=show_id)
-            
             self.show_ws_group_name = f"ws_{self.show.id}"
             async_to_sync(self.channel_layer.group_add)(
                 self.show_ws_group_name, self.channel_name
