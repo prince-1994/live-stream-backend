@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "apps.images.apps.ImagesConfig"
 ]
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -126,8 +126,6 @@ DJOSER = {
     #     'password_changed_confirmation': 'users.email.PasswordChangedConfirmationEmail',
     # }
 }
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
