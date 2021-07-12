@@ -58,12 +58,14 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
         instance = super().update(instance, validated_data)
         query_params_dict = dict(request.query_params)
         delete_image_ids = query_params_dict.get('delete_images')
+        print("hurray",delete_image_ids)
         if delete_image_ids:
             for delete_image_id in delete_image_ids:
                 try:
                     id = int(delete_image_id)
                     image = ProductImage.objects.filter(pk=id).first()
                     if image and image.product.channel.owner == user:
+                        print("hurray",image)
                         image.delete()
                 except ValueError as e:
                     print(e)
