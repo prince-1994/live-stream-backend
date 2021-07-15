@@ -130,6 +130,7 @@ class ShowViewSet(viewsets.ModelViewSet):
         "stream": ["exact", "isnull"],
         "stream__is_live": ["exact"],
         "time": ["gte", "lte"],
+        "channel__owner": ["exact"]
     }
     ordering_fields = ['-time']
 
