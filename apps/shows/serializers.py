@@ -1,4 +1,3 @@
-from drf_extra_fields.fields import Base64ImageField
 from apps.products.serializers import ProductSerializer
 from apps.images.specs import Image1600x900, Image320x180
 from apps.images.serializers import ImageSpecField
@@ -110,9 +109,10 @@ class WriteShowSerializer(serializers.ModelSerializer):
             time__gte=time - time_delta,
             time__lte=time + time_delta,
         ).first()
-        now = datetime.datetime.utcnow().replace(tzinfo=utc)
-        if last_show or time - now > time_delta:
-            return PermissionDenied({"message": "Time clashes with another show."})
+        now = datetime.utcnow().replace(tzinfo=utc)
+        if last_show or time - now < timedelta(minutes=0):
+            print(time, now, last_show)
+            raise PermissionDenied("Time clashes with another show.")
         product_ids = set(
             product.id for product in Product.objects.filter(channel=channel)
         )
@@ -129,10 +129,9 @@ class WriteShowSerializer(serializers.ModelSerializer):
         return obj
 
     def update(self, instance, validated_data):
-        if instance.stream:
-            return PermissionDenied(
-                {"message": "This show is already live or has completed."}
-            )
+        stream = IVSStream.objects.filter(show=instance).first()
+        if stream:
+            raise PermissionDenied("This show is already live or has completed.")
         user = self.context["request"].user
         channel = Channel.objects.filter(owner=user).first()
         if not channel:
@@ -143,12 +142,13 @@ class WriteShowSerializer(serializers.ModelSerializer):
             time__gte=time - time_delta,
             time__lte=time + time_delta,
         )[:2]
-        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        now = datetime.utcnow().replace(tzinfo=utc)
         if (
             len(last_shows) >= 2
-            or (len(last_shows) == 1 and last_shows[0].id == instance.id)
-            or time - now > time_delta
+            or (len(last_shows) == 1 and last_shows[0].id != instance.id)
+            or time - now < timedelta(minutes=0)
         ):
-            return PermissionDenied({"message": "Time clashes with another show."})
+            print(last_shows, time, now, time_delta)
+            raise PermissionDenied("Time clashes with another show.")
 
         return super().update(instance, validated_data)
