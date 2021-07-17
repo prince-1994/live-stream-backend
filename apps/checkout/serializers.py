@@ -27,7 +27,6 @@ class CartProductSerializer(serializers.ModelSerializer):
             "channel",
             "category",
             "price",
-            "selling_price",
             "images",
         )
 

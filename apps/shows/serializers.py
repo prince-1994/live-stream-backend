@@ -148,7 +148,6 @@ class WriteShowSerializer(serializers.ModelSerializer):
             or (len(last_shows) == 1 and last_shows[0].id != instance.id)
             or time - now < timedelta(minutes=0)
         ):
-            print(last_shows, time, now, time_delta)
             raise PermissionDenied("Time clashes with another show.")
 
         return super().update(instance, validated_data)
