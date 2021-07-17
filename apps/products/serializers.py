@@ -27,7 +27,7 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer) :
     images = ProductImageSerializer(many=True)
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'channel', 'sku_id', 'price', 'category', 'selling_price', 'tags', 'images')
+        fields = ('id', 'name', 'description', 'channel', 'sku_id', 'price', 'category', 'tags', 'images')
         read_only_fields = ('channel',)
 
     def create(self, validated_data):
