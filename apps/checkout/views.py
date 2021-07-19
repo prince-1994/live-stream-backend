@@ -169,7 +169,7 @@ class OrderViewSet(CreateModelMixin, viewsets.ReadOnlyModelViewSet):
                     "quantity": quantity,
                     "total_amount": subtotal,
                     "price": product.price,
-                    "selling_price": product.selling_price,
+                    "selling_price": product.price,
                     "commission": commission,
                     "address": address,
                 }
