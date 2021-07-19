@@ -19,7 +19,7 @@ class ShowConsumer(JsonWebsocketConsumer):
             name = f"{first_name} {last_name}"
 
             data = {
-                "id": message.id,
+                "id": self.user.id,
                 "name": name,
                 "message": message.content,
                 "timestamp": str(message.timestamp),
@@ -55,7 +55,7 @@ class ShowConsumer(JsonWebsocketConsumer):
             name = f"{first_name} {last_name}"
 
             data = {
-                "id": message.id,
+                "id": message.user.id,
                 "name": name,
                 "message": message.content,
                 "timestamp": str(message.timestamp),
