@@ -191,7 +191,7 @@ if DJANGO_LOGGING:
 AUTH_USER_MODEL = 'ShopbigUsers.User'
 
 # Auto field
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django
 DOMAIN = os.environ.get('DJANGO_DOMAIN', 'shopbig.live')
