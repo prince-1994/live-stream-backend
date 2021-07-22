@@ -190,6 +190,8 @@ if DJANGO_LOGGING:
 # Auth User Model
 AUTH_USER_MODEL = 'ShopbigUsers.User'
 
+# Auto field
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Django
 DOMAIN = os.environ.get('DJANGO_DOMAIN', 'shopbig.live')
