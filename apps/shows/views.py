@@ -132,7 +132,7 @@ class ShowViewSet(viewsets.ModelViewSet):
         "time": ["gte", "lte"],
         "channel__owner": ["exact"]
     }
-    ordering_fields = ['-time']
+    ordering_fields = ['time']
 
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
