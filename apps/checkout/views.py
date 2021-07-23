@@ -51,6 +51,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
 class OrderViewSet(CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = OrderSerializer
+    ordering_fields = ["created_at"]
 
     def get_queryset(self):
         user = self.request.user

@@ -48,6 +48,7 @@ class WriteCartSerializer(serializers.ModelSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     status = ChoiceField(choices=OrderItem.STATUS_CHOICES)
+    product = CartProductSerializer(read_only=True)
 
     class Meta:
         model = OrderItem
