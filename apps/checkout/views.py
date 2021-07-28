@@ -234,6 +234,6 @@ class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         channel = Channel.objects.filter(owner=self.request.user).first()
-        if not channel:
-            return OrderItem.objects.filter(order__product__channel=channel)
+        if channel:
+            return OrderItem.objects.filter(product__channel=channel)
         return OrderItem.objects.none()

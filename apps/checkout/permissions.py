@@ -8,7 +8,7 @@ class OrderItemEditPermission(BasePermission):
         if (type(request.user) == AnonymousUser):
             return False
         else :
-            channel_id = request.parser_context.get('kwargs').get('channel_id')
+            channel_id = request.query_params.get('channel')
             channel = Channel.objects.filter(pk=channel_id).first()
             if channel == None: 
                 return False
