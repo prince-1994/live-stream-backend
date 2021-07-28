@@ -228,7 +228,7 @@ class OrderViewSet(CreateModelMixin, viewsets.ReadOnlyModelViewSet):
         )
 
 
-class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
+class OrderItemViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, OrderItemEditPermission)
     serializer_class = OrderItemSerializer
 
