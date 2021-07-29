@@ -1,9 +1,10 @@
 from storages.backends.s3boto3 import S3Boto3Storage
 from tempfile import SpooledTemporaryFile
 import os
+from django.conf import settings
 
 class MediaStore(S3Boto3Storage):
-    location = 'media'
+    location = f'{settings.ENV}/media'
     file_overwrite = False
 
     """
