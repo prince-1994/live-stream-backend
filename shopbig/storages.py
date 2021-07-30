@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 
 class MediaStore(S3Boto3Storage):
-    location = f'{settings.ENV}/media'
+    location = f'{settings.AWS_LOCATION}'
     file_overwrite = False
 
     """

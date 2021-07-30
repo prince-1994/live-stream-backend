@@ -208,7 +208,7 @@ AWS_IVS_VIDEO_CDN = os.environ.get("AWS_IVS_VIDEO_CDN")
 # AWS S3
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 AWS_DEFAULT_ACL = "public-read"
-# AWS_LOCATION = "media"
+AWS_LOCATION = os.environ.get("AWS_LOCATION","")
 AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "")
 AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "")
