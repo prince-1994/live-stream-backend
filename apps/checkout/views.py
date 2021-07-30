@@ -231,6 +231,7 @@ class OrderViewSet(CreateModelMixin, viewsets.ReadOnlyModelViewSet):
 class OrderItemViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, OrderItemEditPermission)
     serializer_class = OrderItemSerializer
+    ordering_fields = ["created_at"]
 
     def get_queryset(self):
         channel = Channel.objects.filter(owner=self.request.user).first()
