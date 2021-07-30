@@ -103,6 +103,9 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": DJANGO_REST_PAGE_SIZE,
 }
 
+if ENV == 'prod':
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ['rest_framework.renderers.JSONRenderer',]
+
 # Djoser Framework
 DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": os.environ.get("DJANGO_PASSWORD_RESET_URL"),
