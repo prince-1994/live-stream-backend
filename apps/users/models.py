@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.fields import BLANK_CHOICE_DASH
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from .managers import CustomUserManager
 
@@ -16,7 +17,7 @@ class User(AbstractUser):
     profile_pic = models.ImageField(default=None, null=True, blank=True, upload_to=profile_pic_name)
     stripe_customer = models.CharField(max_length=100, null = True, blank=True)
     stripe_connected_account = models.CharField(max_length=100, null=True, blank=True)
-    seller_activated = models.BooleanField(default=False)
+    seller_activated = models.BooleanField(default=settings.SHOPBIG_ALLOW_SELLERS_BY_DEFAULT)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

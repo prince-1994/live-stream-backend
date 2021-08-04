@@ -312,3 +312,8 @@ if SENTRY_DSN:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
+
+
+# SHOPBIG
+
+SHOPBIG_ALLOW_SELLERS_BY_DEFAULT = os.environ.get("SHOPBIG_ALLOW_SELLERS_BY_DEFAULT", False)
