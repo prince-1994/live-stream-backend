@@ -25,24 +25,26 @@ from apps.profiles.views import AddressViewset
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
+from apps.users.views import exchange_token
 
 router = DefaultRouter()
-router.register(r'channels', ChannelViewSet, basename='channel')
-router.register(r'products', ProductViewSet, basename="product")
-router.register(r'categories', CategoryViewSet, basename='category')
-router.register(r'shows', ShowViewSet, basename='show')
-router.register(r'cart-items', CartItemViewSet, basename='cart')
-router.register(r'addresses', AddressViewset, basename='address')
-router.register(r'orders', OrderViewSet, basename='order')
-router.register(r'order-items', OrderItemViewSet, basename='order-item')
-router.register(r'streams', StreamViewSet, basename='stream')
+router.register(r"channels", ChannelViewSet, basename="channel")
+router.register(r"products", ProductViewSet, basename="product")
+router.register(r"categories", CategoryViewSet, basename="category")
+router.register(r"shows", ShowViewSet, basename="show")
+router.register(r"cart-items", CartItemViewSet, basename="cart")
+router.register(r"addresses", AddressViewset, basename="address")
+router.register(r"orders", OrderViewSet, basename="order")
+router.register(r"order-items", OrderItemViewSet, basename="order-item")
+router.register(r"streams", StreamViewSet, basename="stream")
 
 urlpatterns = []
 urlpatterns += router.urls
 urlpatterns += [
-    path('chat/', include('apps.chats.urls')),
-    path('admin/', admin.site.urls),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
+    path("chat/", include("apps.chats.urls")),
+    path("admin/", admin.site.urls),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.authtoken")),
+    path("auth/social/<str:backend>/login/", exchange_token, name="social-auth"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
