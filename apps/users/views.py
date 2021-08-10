@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-
+from django.contrib.auth.models import update_last_login
 from requests.exceptions import HTTPError
 
 from social_django.utils import psa
@@ -78,6 +78,7 @@ def exchange_token(request, backend):
         if user:
             if user.is_active:
                 token, _  = Token.objects.get_or_create(user=user)
+                update_last_login("Social-auth", user) 
                 return Response({"auth_token": token.key})
             else:
                 # user is not active; at some point they deleted their account,
