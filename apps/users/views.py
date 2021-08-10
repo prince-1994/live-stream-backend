@@ -46,6 +46,7 @@ def exchange_token(request, backend):
     Requests must include the following field
     - `access_token`: The OAuth2 access token provided by the provider
     """
+    print(request.data)
     serializer = SocialSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         # set up non-field errors key
@@ -76,9 +77,8 @@ def exchange_token(request, backend):
 
         if user:
             if user.is_active:
-                # token, _ = Token.objects.get_or_create(user=user)
-                print(user)
-                return Response({"token": user})
+                token, _  = Token.objects.get_or_create(user=user)
+                return Response({"auth_token": token.key})
             else:
                 # user is not active; at some point they deleted their account,
                 # or were banned by a superuser. They can't just log in with their

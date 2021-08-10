@@ -105,39 +105,43 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.facebook.FacebookOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
+    "social_core.backends.google.GoogleOAuth2",
+    "social_core.backends.facebook.FacebookOAuth2",
+    "django.contrib.auth.backends.ModelBackend",
 )
 
-for key in ['GOOGLE_OAUTH2_KEY',
-            'GOOGLE_OAUTH2_SECRET',
-            'FACEBOOK_KEY',
-            'FACEBOOK_SECRET']:
+for key in [
+    "GOOGLE_OAUTH2_KEY",
+    "GOOGLE_OAUTH2_SECRET",
+    "FACEBOOK_KEY",
+    "FACEBOOK_SECRET",
+]:
     exec("SOCIAL_AUTH_{key} = os.environ.get('{key}', '')".format(key=key))
 
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
+SOCIAL_AUTH_FACEBOOK_SCOPE = ["email"]
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ["email", "profile"]
 
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
-  'fields': 'id, name, email, age_range, first_name, last_name'
+    "fields": "id, name, email, age_range, first_name, last_name"
 }
 
 SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
-    'social_core.pipeline.user.get_username',
-    'social_core.pipeline.social_auth.associate_by_email',  # <- this line not included by default
-    'social_core.pipeline.user.create_user',
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
+    "social_core.pipeline.social_auth.social_details",
+    "social_core.pipeline.social_auth.social_uid",
+    "social_core.pipeline.social_auth.auth_allowed",
+    "social_core.pipeline.social_auth.social_user",
+    "social_core.pipeline.user.get_username",
+    "social_core.pipeline.social_auth.associate_by_email",  # <- this line not included by default
+    "social_core.pipeline.user.create_user",
+    "social_core.pipeline.social_auth.associate_user",
+    "social_core.pipeline.social_auth.load_extra_data",
+    "social_core.pipeline.user.user_details",
 )
 
-if ENV == 'prod':
-    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ['rest_framework.renderers.JSONRenderer',]
+if ENV == "prod":
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
+        "rest_framework.renderers.JSONRenderer",
+    ]
 
 # Djoser Framework
 DJOSER = {
@@ -244,7 +248,7 @@ AWS_IVS_VIDEO_CDN = os.environ.get("AWS_IVS_VIDEO_CDN")
 # AWS S3
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 AWS_DEFAULT_ACL = "public-read"
-AWS_LOCATION = os.environ.get("AWS_LOCATION","")
+AWS_LOCATION = os.environ.get("AWS_LOCATION", "")
 AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "")
 AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "")
@@ -349,4 +353,6 @@ if SENTRY_DSN:
 
 # SHOPBIG
 
-SHOPBIG_ALLOW_SELLERS_BY_DEFAULT = os.environ.get("SHOPBIG_ALLOW_SELLERS_BY_DEFAULT", False)
+SHOPBIG_ALLOW_SELLERS_BY_DEFAULT = os.environ.get(
+    "SHOPBIG_ALLOW_SELLERS_BY_DEFAULT", False
+)
