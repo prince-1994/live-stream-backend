@@ -22,6 +22,7 @@ from apps.channels.views import ChannelViewSet
 from apps.products.views import CategoryViewSet, ProductViewSet
 from apps.shows.views import ShowViewSet, StreamViewSet
 from apps.profiles.views import AddressViewset
+from apps.social.views import SocialViewSet
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
@@ -37,6 +38,7 @@ router.register(r"addresses", AddressViewset, basename="address")
 router.register(r"orders", OrderViewSet, basename="order")
 router.register(r"order-items", OrderItemViewSet, basename="order-item")
 router.register(r"streams", StreamViewSet, basename="stream")
+router.register(r"socials", SocialViewSet, basename="social")
 
 urlpatterns = []
 urlpatterns += router.urls

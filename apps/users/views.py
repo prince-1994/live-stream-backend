@@ -12,7 +12,7 @@ from requests.exceptions import HTTPError
 from social_django.utils import psa
 
 
-class SocialSerializer(serializers.Serializer):
+class SocialAuthSerializer(serializers.Serializer):
     """
     Serializer which accepts an OAuth2 access token.
     """
@@ -47,7 +47,7 @@ def exchange_token(request, backend):
     - `access_token`: The OAuth2 access token provided by the provider
     """
     print(request.data)
-    serializer = SocialSerializer(data=request.data)
+    serializer = SocialAuthSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         # set up non-field errors key
         # http://www.django-rest-framework.org/api-guide/exceptions/#exception-handling-in-rest-framework-views

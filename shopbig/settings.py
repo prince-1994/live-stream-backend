@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "apps.profiles.apps.ProfilesConfig",
     "apps.payout.apps.PayoutConfig",
     "apps.images.apps.ImagesConfig",
+    "apps.social.apps.SocialConfig"
 ]
 
 CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
